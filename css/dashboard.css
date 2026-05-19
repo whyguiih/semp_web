@@ -1,0 +1,90 @@
+/* css/dashboard.css */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh; /* Trava a altura exata da janela do navegador */
+    width: 100vw;  /* Trava a largura exata */
+    overflow: hidden; /* Corta qualquer coisa que tente fazer a tela inteira rolar */
+    font-family: 'Neo Sans', sans-serif;
+    background: linear-gradient(to bottom, #1a4b9f 0%, #ef5e31 100%);
+    display: flex;
+}
+
+/* Sidebar Fixa */
+.sidebar {
+    width: 100px;
+    height: calc(100vh - 32px); /* Altura da tela menos as margens */
+    background-color: rgba(222, 222, 229, 0.5);
+    border-radius: 25px;
+    margin: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+    position: relative;
+}
+
+.sidebar img {
+    width: 65px;
+    margin-bottom: 30px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.sidebar img:hover { transform: scale(1.1); }
+
+.sidebar-bottom {
+    position: absolute;
+    bottom: 20px;
+}
+
+/* Área de Conteúdo (Esta é a única parte que vai rolar) */
+.main-content {
+    flex: 1;
+    height: calc(100vh - 32px);
+    background-color: rgba(222, 222, 229, 0.5);
+    border-radius: 25px;
+    margin: 16px 16px 16px 0;
+    padding: 30px;
+    overflow-y: auto; /* A MÁGICA ESTÁ AQUI: Cria uma barra de rolagem só dentro dessa caixa! */
+}
+
+/* Formulários (Para os novos cadastros) */
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 20px; color: #1a4b9f; font-weight: bold; margin-bottom: 5px; }
+.form-group input, .form-group textarea { 
+    width: 100%; padding: 10px; border-radius: 10px; border: none; font-size: 16px; 
+}
+
+/* Botões */
+.btn-primary {
+    background-color: #1a4b9f; color: white; border: none; border-radius: 20px;
+    padding: 15px 30px; font-size: 24px; font-weight: bold; cursor: pointer; transition: 0.3s;
+}
+.btn-primary:hover { background-color: #153666; }
+.btn-danger { background-color: #ef5e31; } /* Laranja para recusar */
+
+/* Barra de Pesquisa e Grid continuam iguais */
+.search-bar {
+    display: flex; align-items: center; background-color: rgba(75, 112, 177, 0.25);
+    border-radius: 25px; padding: 10px 20px; margin-bottom: 30px;
+}
+.search-bar img { width: 40px; margin-right: 15px; }
+.search-bar input { background: transparent; border: none; outline: none; color: #fff; font-size: 24px; width: 100%; }
+.search-bar input::placeholder { color: #d7d7d7; }
+
+.produtos-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;
+}
+.produto-card {
+    background-color: #1a4b9f; border-radius: 15px; padding: 15px; color: white;
+    text-align: center; text-decoration: none; display: block;
+}
+.cart-item {
+    display: flex; justify-content: space-between; align-items: center;
+    background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;
+}
