@@ -31,6 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['logado'] = true;
         $_SESSION['usuario'] = $usuario;
         $_SESSION['nivel_conta'] = $resultado['nivel_conta'];
+        $_SESSION['unidade'] = $resultado['unidade'];
         header("Location: estoque.php");
         exit();
 

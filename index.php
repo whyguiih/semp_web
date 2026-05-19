@@ -1,5 +1,4 @@
 <?php
-// Inicia a sessão para podermos pegar mensagens de erro
 session_start();
 ?>
 <!DOCTYPE html>
