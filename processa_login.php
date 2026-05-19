@@ -1,43 +1,24 @@
 <?php
 session_start();
+require_once 'api.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $usuario = $_POST['usuario'] ?? '';
-    $senha = $_POST['senha'] ?? '';
+    $usuario = $_POST['usuario'];
+    $senha = $_POST['senha'];
 
-    $apiUrl = "https://api-estoque.whyguiih.workers.dev/login";
-    
-    $dados_post = json_encode([
-        'usuario' => $usuario,
-        'senha' => $senha
-    ]);
+    // Chama a rota /login do Worker
+    $resposta = chamarAPI('/login', 'POST', ['usuario' => $usuario, 'senha' => $senha]);
 
-    $ch = curl_init($apiUrl);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $dados_post);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json'
-    ]);
-
-    $resposta = curl_exec($ch);
-    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
-
-    $resultado = json_decode($resposta, true);
-
-    if ($http_code == 200 && isset($resultado['sucesso']) && $resultado['sucesso'] == true) {
-        
+    if (isset($resposta['sucesso']) && $resposta['sucesso'] === true) {
         $_SESSION['logado'] = true;
-        $_SESSION['usuario'] = $usuario;
-        $_SESSION['nivel_conta'] = $resultado['nivel_conta'];
-        $_SESSION['unidade'] = $resultado['unidade'];
+        $_SESSION['usuario'] = $resposta['usuario'];
+        $_SESSION['nivel_conta'] = $resposta['nivel_conta'];
+        $_SESSION['unidade'] = $resposta['unidade'];
+        
         header("Location: estoque.php");
         exit();
-
     } else {
-        $_SESSION['erro_login'] = "Usuário ou senha inválidos!";
-        header("Location: index.php");
+        header("Location: index.php?erro=1");
         exit();
     }
 } else {

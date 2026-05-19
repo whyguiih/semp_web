@@ -1,50 +1,61 @@
 <?php
 session_start();
-require_once 'conexao.php';
+require_once 'api.php';
 
-if ($_SESSION['nivel_conta'] == '0') { header("Location: estoque.php"); exit(); }
+if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] == '0') { header("Location: estoque.php"); exit(); }
 
 if (isset($_GET['acao']) && isset($_GET['id_emprestimo'])) {
-    $id = $_GET['id_emprestimo'];
-    $novoStatus = ($_GET['acao'] == 'aceitar') ? 1 : 2;
-
-    $stmtUpdate = $pdo->prepare("UPDATE tb_emprestimo SET aprovacao = ? WHERE id = ?");
-    $stmtUpdate->execute([$novoStatus, $id]);
+    $novoStatus = ($_GET['acao'] == 'aceitar') ? 1 : 2; 
     
+    chamarAPI('/pedidos/autorizar', 'POST', [
+        'id_emprestimo' => $_GET['id_emprestimo'], 
+        'novoStatus' => $novoStatus
+    ]);
     header("Location: autorizar_pedidos.php?msg=Atualizado");
     exit();
 }
 
-$unidade_logada = $_SESSION['unidade'];
-$sql = "SELECT * FROM tb_emprestimo WHERE processamento = 1 AND unidade_natal = ? AND aprovacao = 0";
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$unidade_logada]);
-$pedidosPendentes = $stmt->fetchAll();
+// Passa a unidade na URL da API para trazer apenas os pedidos corretos
+$pedidosPendentes = chamarAPI('/pedidos/pendentes?unidade=' . urlencode($_SESSION['unidade']), 'GET');
+if (!is_array($pedidosPendentes)) $pedidosPendentes = [];
 ?>
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
     <title>Autorizar Pedidos</title>
     <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
+    <div class="sidebar">
+        <a href="estoque.php"><img src="img/logo_menor.png" alt="Logo"></a>
+        <a href="estoque.php"><img src="img/lista.png" alt="Lista"></a>
+        <a href="carrinho.php"><img src="img/carrinho.png" alt="Carrinho"></a>
+        <a href="autorizar_pedidos.php"><img src="img/controle.png" alt="Controlo"></a>
+        <?php if ($_SESSION['nivel_conta'] == '1'): ?>
+            <a href="cadastro_produto.php"><img src="img/lupa.png" alt="Cadastro"></a>
+        <?php endif; ?>
+        <div class="sidebar-bottom"><a href="logout.php"><img src="img/sair.png" alt="Sair"></a></div>
+    </div>
+
     <div class="main-content">
-        <h1 style="color: #1a4b9f;">Pedidos Aguardando Autorização</h1>
+        <h1 style="color: #1a4b9f; margin-bottom: 20px;">Pedidos a Aguardar Autorização</h1>
         
+        <?php if(isset($_GET['msg'])) echo "<p style='color: green;'>Estado atualizado com sucesso!</p>"; ?>
+
         <?php if(empty($pedidosPendentes)): ?>
-            <h2 style="color: #333;">Nenhum pedido pendente na sua unidade no momento.</h2>
+            <h2 style="color: #333;">Nenhum pedido pendente para a tua unidade.</h2>
         <?php else: ?>
             <?php foreach ($pedidosPendentes as $pedido): ?>
                 <div class="cart-item">
                     <div>
-                        <h2>Pedido de: <?= htmlspecialchars($pedido['remetente'] ?? 'Desconhecido') ?></h2>
-                        <p>Produto: <?= htmlspecialchars($pedido['nome_produto']) ?> | Quantidade: <?= htmlspecialchars($pedido['quant']) ?></p>
+                        <h2 style="color: #1a4b9f; margin: 0;">Pedido de: <?= htmlspecialchars($pedido['remetente'] ?? 'Desconhecido') ?></h2>
+                        <p>Produto: <?= htmlspecialchars($pedido['nome_produto']) ?> | Qtd: <?= htmlspecialchars($pedido['quant']) ?></p>
                         <p>Destino: <?= htmlspecialchars($pedido['destinatario']) ?></p>
                     </div>
                     <div>
-                        <a href="autorizar_pedidos.php?acao=aceitar&id_emprestimo=<?= $pedido['id'] ?>" class="btn-primary" style="text-decoration:none; margin-right: 10px;">Liberar (1)</a>
-                        <a href="autorizar_pedidos.php?acao=recusar&id_emprestimo=<?= $pedido['id'] ?>" class="btn-primary btn-danger" style="text-decoration:none;">Deletar (2)</a>
+                        <a href="autorizar_pedidos.php?acao=aceitar&id_emprestimo=<?= $pedido['id_emprestimo'] ?>" class="btn-primary" style="text-decoration:none; margin-right:10px; font-size:18px; padding:10px 20px;">Liberar</a>
+                        <a href="autorizar_pedidos.php?acao=recusar&id_emprestimo=<?= $pedido['id_emprestimo'] ?>" class="btn-primary btn-danger" style="text-decoration:none; font-size:18px; padding:10px 20px; background-color:#ef5e31;">Deletar</a>
                     </div>
                 </div>
             <?php endforeach; ?>

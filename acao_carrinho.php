@@ -1,14 +1,10 @@
 <?php
 session_start();
-require_once 'conexao.php';
+require_once 'api.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_produto'])) {
-    $id = $_POST['id_produto'];
-
-    $sql = "UPDATE tb_estoque SET carrinho = '1' WHERE id_estoque = ?";
-    $stmt = $pdo->prepare($sql);
-    $stmt->execute([$id]);
-
+    // Comunica à API que o carrinho deste produto virou "1"
+    chamarAPI('/carrinho/adicionar', 'POST', ['id_produto' => $_POST['id_produto']]);
     header("Location: carrinho.php");
     exit();
 } else {
