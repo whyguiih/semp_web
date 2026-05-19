@@ -7,7 +7,6 @@ if (!isset($_SESSION['logado'])) {
     exit();
 }
 
-// Lógica traduzida da classe carrinho.java
 $stmt = $pdo->prepare("SELECT * FROM tb_estoque WHERE carrinho = '1'");
 $stmt->execute();
 $produtos_carrinho = $stmt->fetchAll(PDO::FETCH_ASSOC);

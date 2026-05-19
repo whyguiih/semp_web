@@ -9,7 +9,6 @@ if (!isset($_GET['id'])) {
 
 $id_produto = $_GET['id'];
 
-// Busca o produto específico (Mesma lógica do controller_carrinho.java)
 $stmt = $pdo->prepare("SELECT * FROM tb_estoque WHERE id_estoque = ?");
 $stmt->execute([$id_produto]);
 $produto = $stmt->fetch(PDO::FETCH_ASSOC);

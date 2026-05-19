@@ -2,13 +2,11 @@
 session_start();
 require_once 'conexao.php';
 
-// Apenas Nível 1 (Admin) ou Nível 2 (Compras) podem acessar
 if ($_SESSION['nivel_conta'] == '0') { header("Location: estoque.php"); exit(); }
 
-// Lógica de Aceitar ou Recusar
 if (isset($_GET['acao']) && isset($_GET['id_emprestimo'])) {
     $id = $_GET['id_emprestimo'];
-    $novoStatus = ($_GET['acao'] == 'aceitar') ? 1 : 2; // 1 = Aprovado, 2 = Recusado
+    $novoStatus = ($_GET['acao'] == 'aceitar') ? 1 : 2;
 
     $stmtUpdate = $pdo->prepare("UPDATE tb_emprestimo SET aprovacao = ? WHERE id = ?");
     $stmtUpdate->execute([$novoStatus, $id]);
@@ -18,7 +16,6 @@ if (isset($_GET['acao']) && isset($_GET['id_emprestimo'])) {
 }
 
 $unidade_logada = $_SESSION['unidade'];
-// Traz os pedidos pendentes (processamento = 1, aprovacao = 0) para a unidade logada
 $sql = "SELECT * FROM tb_emprestimo WHERE processamento = 1 AND unidade_natal = ? AND aprovacao = 0";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([$unidade_logada]);

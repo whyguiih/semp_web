@@ -1,13 +1,12 @@
 <?php
 session_start();
-require_once 'conexao.php'; // Chama a conexão com o banco
+require_once 'conexao.php';
 
 if (!isset($_SESSION['logado']) || $_SESSION['logado'] !== true) {
     header("Location: index.php");
     exit();
 }
 
-// Busca todos os produtos do banco (Lógica do App_estoque.java)
 $stmt = $pdo->prepare("SELECT * FROM tb_estoque");
 $stmt->execute();
 $produtos = $stmt->fetchAll(PDO::FETCH_ASSOC);

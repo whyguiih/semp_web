@@ -2,7 +2,6 @@
 session_start();
 require_once 'conexao.php';
 
-// Bloqueia quem não for Admin (1)
 if ($_SESSION['nivel_conta'] != '1') { header("Location: estoque.php"); exit(); }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -13,18 +12,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $uni_natal = $_POST['uni_natal'];
     $caminhoNoBanco = null;
 
-    // --- LÓGICA DE FOTOS NA WEB ---
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
-        $pastaDestino = 'uploads/'; // Crie essa pasta no seu projeto!
-        $nomeUnico = time() . '_' . $_FILES['foto']['name']; // Equivalente ao System.currentTimeMillis()
+        $pastaDestino = 'uploads/';
+        $nomeUnico = time() . '_' . $_FILES['foto']['name'];
         $arquivoDestino = $pastaDestino . $nomeUnico;
         
-        // Move o arquivo do temporário para nossa pasta
         move_uploaded_file($_FILES['foto']['tmp_name'], $arquivoDestino);
         $caminhoNoBanco = $arquivoDestino;
     }
 
-    // Salva no banco (Igual ao Java JDBC)
     $sql = "INSERT INTO tb_estoque (nome, codigo, descricao, quant, uni_natal, foto) VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$nome, $codigo, $descricao, $quant, $uni_natal, $caminhoNoBanco]);
