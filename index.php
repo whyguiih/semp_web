@@ -1,3 +1,7 @@
+<?php
+// Inicia a sessão para podermos pegar mensagens de erro
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -10,19 +14,28 @@
     <div class="login-container">
         <div class="login-form">
             <h1>Login</h1>
-            <form action="#">
+
+            <form action="processa_login.php" method="POST">
                 <div class="input-group">
                     <label for="usuario">Usuário</label>
-                    <input type="text" id="usuario" value="" required>
+                    <input type="text" id="usuario" name="usuario" required>
                 </div>
                 
                 <div class="input-group">
                     <label for="senha">Senha</label>
-                    <input type="password" id="senha" value="" required>
+                    <input type="password" id="senha" name="senha" required>
                 </div>
                 
+                <?php
+            if (isset($_SESSION['erro_login'])) {
+                echo '<p style="color: red; font-weight: bold; text-align: center; margin-bottom: 15px;">' . $_SESSION['erro_login'] . '</p>';
+                unset($_SESSION['erro_login']); // Limpa a mensagem após exibir
+            }
+            ?>
+
                 <button type="submit">Entrar</button>
             </form>
+
         </div>
 
         <div class="login-brand">
