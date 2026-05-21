@@ -33,7 +33,7 @@ if (!$produto || isset($produto['erro'])) {
         <?php if ($_SESSION['nivel_conta'] == '1'): ?>
             <a href="cadastro_produto.php"><img src="img/lupa.png" alt="Cadastro"></a>
         <?php endif; ?>
-
+        
         <div class="sidebar-bottom">
             <a href="logout.php"><img src="img/sair.png" alt="Sair"></a>
         </div>
