@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Chama a rota /login do Worker
     $resposta = chamarAPI('/login', 'POST', ['usuario' => $usuario, 'senha' => $senha]);
-
+   
     if (isset($resposta['sucesso']) && $resposta['sucesso'] === true) {
         $_SESSION['logado'] = true;
         $_SESSION['usuario'] = $resposta['usuario'];

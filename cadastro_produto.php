@@ -48,20 +48,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="sidebar-bottom"><a href="logout.php"><img src="img/sair.png" alt="Sair"></a></div>
     </div>
     
-    <div class="main-content">
-        <h1 style="color: #1a4b9f; margin-bottom: 20px;">Cadastrar Novo Produto</h1>
-        <?php if(isset($mensagem)) echo "<h2 style='color: green; margin-bottom: 15px;'>$mensagem</h2>"; ?>
-
-        <form method="POST" enctype="multipart/form-data" style="max-width: 600px;">
-            <div class="form-group"><label>Nome do Produto:</label><input type="text" name="nome" required></div>
-            <div class="form-group"><label>Código:</label><input type="text" name="codigo" required></div>
-            <div class="form-group"><label>Quantidade:</label><input type="number" name="quant" required></div>
-            <div class="form-group"><label>Unidade (Origem):</label><input type="text" name="uni_natal" value="<?= htmlspecialchars($_SESSION['unidade']) ?>" required></div>
-            <div class="form-group"><label>Descrição:</label><textarea name="descricao" rows="4"></textarea></div>
-            <div class="form-group"><label>Foto (Opcional):</label><input type="file" name="foto" accept="image/png, image/jpeg"></div>
+  <div class="main-content" style="display: flex; justify-content: center; align-items: center; padding: 0;">
+        
+        <div class="cadastro-container">
+            <h1 style="color: #1a4b9f; margin-bottom: 15px; text-align: center; font-size: 28px;">Cadastrar Novo Produto</h1>
             
-            <button type="submit" class="btn-primary">Salvar Produto na API</button>
-        </form>
+            <?php if(isset($mensagem)) echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 10px 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; width: 100%; font-size: 18px;'>$mensagem</h2>"; ?>
+
+            <form method="POST" enctype="multipart/form-data" class="form-cadastro">
+                
+                <div class="form-linha">
+                    <div class="form-group">
+                        <label>Nome do Produto:</label>
+                        <input type="text" name="nome" placeholder="Ex: Alicate de Pressão" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Código:</label>
+                        <input type="text" name="codigo" placeholder="Ex: 3213" required>
+                    </div>
+                </div>
+                
+                <div class="form-linha">
+                    <div class="form-group">
+                        <label>Quantidade:</label>
+                        <input type="number" name="quant" placeholder="0" required min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Unidade (Origem):</label>
+                        <input type="text" name="uni_natal" value="<?= htmlspecialchars($_SESSION['unidade']) ?>" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição:</label>
+                    <textarea name="descricao" rows="2" placeholder="Adicione detalhes sobre o produto..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Foto (Opcional):</label>
+                    <input type="file" name="foto" accept="image/png, image/jpeg" class="file-input">
+                </div>
+                
+                <button type="submit" class="btn-primary btn-salvar">Salvar Produto</button>
+            </form>
+        </div>
+
     </div>
 </body>
 </html>

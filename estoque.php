@@ -37,12 +37,18 @@ if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva 
     <div class="main-content">
         <div class="search-bar">
             <img src="img/lupa.png" alt="Pesquisar">
-            <input type="text" placeholder="Pesquisar produtos...">
+            <input type="text" id="input-pesquisa" placeholder="Pesquisar produtos...">
         </div>
 
         <div class="produtos-grid">
             <?php foreach ($produtos as $p): ?>
                 <a href="produto.php?id=<?= htmlspecialchars($p['id_estoque']) ?>" class="produto-card">
+                    
+                  <img 
+    src="<?= !empty($p['foto']) ? htmlspecialchars($p['foto']) : 'https://picsum.photos/250/150?random=' . $p['id_estoque'] ?>" 
+    onerror="this.onerror=null; this.src='https://picsum.photos/250/150?random=<?= $p['id_estoque'] ?>';" 
+    alt="Foto do produto">
+                    
                     <h2><?= htmlspecialchars($p['nome']) ?></h2>
                     <p>Código: <?= htmlspecialchars($p['codigo']) ?></p>
                     <p>Quantidade: <?= htmlspecialchars($p['quant']) ?></p>
@@ -55,4 +61,26 @@ if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva 
         </div>
     </div>
 </body>
+<script>
+    // O equivalente ao DocumentListener: Ouve cada vez que o usuário digita algo
+    document.getElementById('input-pesquisa').addEventListener('input', function() {
+        // Pega o termo digitado e converte para minúsculas
+        let termo = this.value.toLowerCase();
+        
+        // Seleciona todos os "cards" de produtos na tela
+        let produtos = document.querySelectorAll('.produto-card');
+
+        produtos.forEach(function(produto) {
+            // Procura a tag <h2> dentro do card (que é onde está o nome do produto)
+            let nomeProduto = produto.querySelector('h2').innerText.toLowerCase();
+            
+            // Lógica do Java (LIKE %termo%): Se o nome incluir o termo digitado, exibe. Senão, esconde.
+            if (nomeProduto.includes(termo)) {
+                produto.style.display = 'block'; // Mostra o card
+            } else {
+                produto.style.display = 'none';  // Esconde o card
+            }
+        });
+    });
+    </script>
 </html>

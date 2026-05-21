@@ -10,7 +10,8 @@ function chamarAPI($endpoint, $metodo = 'GET', $dados = null) {
     // Configura o cURL
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $metodo);
-
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    
     // Se houver dados (POST), converte para JSON e envia
     if ($dados !== null) {
         $json_dados = json_encode($dados);

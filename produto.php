@@ -38,30 +38,51 @@ if (!$produto || isset($produto['erro'])) {
             <a href="logout.php"><img src="img/sair.png" alt="Sair"></a>
         </div>
     </div>
-
-    <div class="main-content">
+<div class="main-content" style="position: relative;">
         <div class="produto-detalhe">
-            <div class="produto-detalhe-img">
-                <?php if(!empty($produto['foto'])): ?>
-                    <img src="<?= htmlspecialchars($produto['foto']) ?>" alt="Foto">
-                <?php else: ?>
-                    <img src="img/imagem.png" alt="Sem Foto">
-                <?php endif; ?>
-            </div>
             
-            <div class="produto-detalhe-info">
+            <div class="produto-col-esquerda">
+                <div class="produto-detalhe-img">
+                    <img src="<?= !empty($produto['foto']) ? htmlspecialchars($produto['foto']) : 'https://picsum.photos/300/220?random=' . $produto['id_estoque'] ?>" 
+                         onerror="this.onerror=null; this.src='https://picsum.photos/300/220?random=<?= $produto['id_estoque'] ?>';" 
+                         alt="Foto do produto">
+                </div>
                 <h1><?= htmlspecialchars($produto['nome']) ?></h1>
                 <h3>Código: <?= htmlspecialchars($produto['codigo']) ?></h3>
+            </div>
+            
+            <div class="produto-col-right">
                 <h3>Unidade Original: <?= htmlspecialchars($produto['uni_natal']) ?></h3>
-                <p><?= htmlspecialchars($produto['descricao']) ?></p>
-                <p><strong>Em stock:</strong> <?= htmlspecialchars($produto['quant']) ?></p>
-                
-                <form action="acao_carrinho.php" method="POST">
-                    <input type="hidden" name="id_produto" value="<?= $produto['id_estoque'] ?>">
-                    <button type="submit" class="btn-primary">Adicionar ao Carrinho</button>
-                </form>
+                <p><strong>Descrição:</strong> <?= htmlspecialchars($produto['descricao']) ?></p>
+                <p><strong>Estoque disponível:</strong> <?= htmlspecialchars($produto['quant']) ?></p>
             </div>
         </div>
+
+        <form action="acao_carrinho.php" method="POST" class="produto-acoes-form">
+            <input type="hidden" name="id_produto" value="<?= $produto['id_estoque'] ?>">
+            
+            <button type="submit" class="btn-primary">Adicionar ao Carrinho</button>
+            
+            <div class="seletor-qtd">
+                <button type="button" onclick="mudarQtd(-1)">-</button>
+                <input type="number" id="quantidade_tela" name="quantidade" value="1" min="1" max="<?= $produto['quant'] ?>" readonly>
+                <button type="button" onclick="mudarQtd(1)">+</button>
+            </div>
+        </form>
     </div>
+
+    <script>
+    function mudarQtd(valor) {
+        var campo = document.getElementById('quantidade_tela');
+        var valorAtual = parseInt(campo.value) || 1;
+        var valorNovo = valorAtual + valor;
+        var min = parseInt(campo.getAttribute('min')) || 1;
+        var max = parseInt(campo.getAttribute('max')) || 1;
+
+        if (valorNovo >= min && valorNovo <= max) {
+            campo.value = valorNovo;
+        }
+    }
+    </script>
 </body>
 </html>
