@@ -27,8 +27,8 @@ body {
 }
 
 .sidebar img {
-    width: 65px;
-    margin-bottom: 30px;
+    width: 45px; /* Tamanho dos ícones reduzido (antes era 65px) */
+    margin-bottom: 35px; /* Aumentei um pouquinho o espaçamento para manter a harmonia */
     cursor: pointer;
     transition: transform 0.2s;
 }
@@ -63,22 +63,445 @@ body {
 .btn-primary:hover { background-color: #153666; }
 .btn-danger { background-color: #ef5e31; }
 
+/* ===== BARRA DE PESQUISA REDUZIDA E CENTRALIZADA ===== */
+/* ===== BARRA DE PESQUISA ALINHADA À ESQUERDA ===== */
 .search-bar {
-    display: flex; align-items: center; background-color: rgba(75, 112, 177, 0.25);
-    border-radius: 25px; padding: 10px 20px; margin-bottom: 30px;
+    display: flex; 
+    align-items: center; 
+    background-color: rgba(75, 112, 177, 0.25);
+    border-radius: 25px; 
+    padding: 10px 20px; 
+    /* A margem '0 0 30px 0' prende a barra no lado esquerdo em vez de centralizar */
+    margin: 0 0 30px 0; 
+    max-width: 400px; /* Barra ligeiramente mais curta para ficar elegante na esquerda */
 }
-.search-bar img { width: 40px; margin-right: 15px; }
-.search-bar input { background: transparent; border: none; outline: none; color: #fff; font-size: 24px; width: 100%; }
-.search-bar input::placeholder { color: #d7d7d7; }
 
+.search-bar img { 
+    width: 30px; 
+    margin-right: 15px; 
+}
+
+.search-bar input { 
+    background: transparent; 
+    border: none; 
+    outline: none; 
+    color: #fff; 
+    font-size: 20px; 
+    width: 100%; 
+}
+
+.search-bar input::placeholder { 
+    color: #d7d7d7; 
+}
+
+/* ===== GRADE DE PRODUTOS MENOR (3 POR LINHA E CENTRALIZADA) ===== */
+/* ===== GRADE DE PRODUTOS MENOR (4 POR LINHA E CENTRALIZADA) ===== */
+/* ===== GRADE DE PRODUTOS (4 POR LINHA, BEM DISTRIBUÍDOS) ===== */
 .produtos-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;
+    display: grid; 
+    /* Divide a tela perfeitamente em 4 colunas iguais, aproveitando o espaço todo */
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px; /* Cria um corredor (espaçamento) padrão e bonito entre os cards */
+    width: 100%; /* Garante que os produtos vão até as bordas, sem deixar cantos vazios */
 }
+
+/* Visual do cartãozinho do produto */
 .produto-card {
-    background-color: #1a4b9f; border-radius: 15px; padding: 15px; color: white;
-    text-align: center; text-decoration: none; display: block;
+    background-color: #1a4b9f; 
+    border-radius: 15px; 
+    padding: 15px; 
+    color: white;
+    text-align: center; 
+    text-decoration: none; 
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Garante que os botões/textos fiquem alinhados mesmo se o nome for grande */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.cart-item {
-    display: flex; justify-content: space-between; align-items: center;
-    background: white; padding: 20px; border-radius: 15px; margin-bottom: 15px;
+
+.produto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+}
+
+/* Foto do produto adaptável */
+.produto-card img {
+    width: 100%; 
+    height: 140px; /* Altura ideal para acompanhar a largura das 4 colunas */
+    object-fit: cover; 
+    border-radius: 10px; 
+    margin-bottom: 12px; 
+    background-color: #ffffff; 
+}
+
+/* Textos bem encaixados */
+.produto-card h2 {
+    font-size: 19px; 
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.produto-card p {
+    font-size: 14px; 
+    margin-bottom: 2px;
+}
+/* ===== NOVO LAYOUT DA PÁGINA DE DETALHES ===== */
+/* ===== NOVO LAYOUT DA PÁGINA DE DETALHES (DIRETO NA TELA) ===== */
+.produto-detalhe {
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+    /* Removido o background branco, bordas e sombras para ficar integrado ao fundo padrão */
+    align-items: flex-start;
+    padding: 10px;
+}
+
+/* Coluna da Foto (Esquerda) */
+.produto-col-esquerda {
+    display: flex;
+    flex-direction: column;
+    width: 260px; /* Foto menor */
+    flex-shrink: 0;
+}
+
+.produto-detalhe-img img {
+    width: 100%;
+    height: 190px;
+    border-radius: 20px; /* Cantos arredondados na foto */
+    object-fit: cover;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Leve sombra apenas na foto para destacar */
+}
+
+.produto-col-esquerda h1 {
+    color: #1a4b9f;
+    font-size: 28px;
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
+
+.produto-col-esquerda h3 {
+    color: #ef5e31; /* Destaque laranja para o código */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* Coluna dos Detalhes (Direita) */
+.produto-col-right {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding-top: 5px;
+}
+
+.produto-col-right h3 {
+    color: #1a4b9f;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.produto-col-right p {
+    color: #333333;
+    font-size: 18px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+/* Alinhamento dos botões lado a lado */
+/* Alinhamento dos botões na parte inferior e extremidades */
+.produto-acoes-form {
+    position: absolute;
+    bottom: 30px; /* Prende na parte inferior da tela */
+    left: 30px; /* Alinha com a borda esquerda do painel */
+    right: 30px; /* Alinha com a borda direita do painel */
+    display: flex;
+    justify-content: space-between; /* Empurra um botão para a esquerda e outro para a direita */
+    align-items: center;
+}
+/* Controle Seletor de Unidades (+ e -) */
+.seletor-qtd {
+    display: flex;
+    align-items: center;
+    background-color: #1a4b9f; 
+    border-radius: 20px; 
+    overflow: hidden;
+    height: 58px; 
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.seletor-qtd button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    width: 45px;
+    height: 100%;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.seletor-qtd button:hover {
+    background-color: #153666; 
+}
+
+/* Telinha Central do Seletor */
+.seletor-qtd input {
+    width: 55px;
+    height: 80%;
+    background-color: #ffffff;
+    border: none;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #1a4b9f;
+    border-radius: 8px; 
+    outline: none;
+    pointer-events: none; 
+    -moz-appearance: textfield;
+}
+
+/* Remove setas padrões do input de número no navegador */
+.seletor-qtd input::-webkit-outer-spin-button,
+.seletor-qtd input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* ===== NOVO LAYOUT DO CARRINHO ===== */
+.cart-item-novo {
+    display: flex;
+    align-items: center;
+    background: transparent; /* Remove o fundo branco */
+    padding: 15px 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid rgba(26, 75, 159, 0.2); /* Linha sutil separando os itens */
+    gap: 20px;
+}
+
+/* Estilo da caixa de seleção (Checkbox) */
+.cart-checkbox {
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    accent-color: #1a4b9f; /* Deixa o "check" com a cor azul do sistema */
+}
+
+/* Imagem menor no carrinho */
+.cart-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* Informações do texto */
+.cart-info {
+    flex: 1; /* Faz o texto empurrar o botão de remover para o final */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cart-info h2 {
+    color: #1a4b9f;
+    font-size: 24px;
+    margin: 0 0 5px 0;
+}
+
+.cart-info p {
+    color: #333333;
+    font-size: 16px;
+    margin: 0;
+    font-weight: bold;
+}
+
+/* Botão de Remover */
+.btn-deletar {
+    background-color: #ef5e31; /* Laranja da identidade visual */
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.btn-deletar:hover {
+    background-color: #c94a24;
+}
+
+/* ===== ESTILOS DA PÁGINA DE CADASTRO ===== */
+/* ===== ESTILOS DA PÁGINA DE CADASTRO CENTRALIZADA ===== */
+/* ===== ESTILOS DA PÁGINA DE CADASTRO COM CONTAINER (GLASSMORPHISM) ===== */
+
+/* O cartão que abraça e integra o formulário à página */
+/* ===== ESTILOS DA PÁGINA DE CADASTRO COM CONTAINER COMPACTO ===== */
+
+.cadastro-container {
+    background-color: rgba(255, 255, 255, 0.4); 
+    padding: 25px 40px; /* Reduzido o espaço interno */
+    border-radius: 25px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.5); 
+    width: 100%;
+    max-width: 750px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-cadastro {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-linha {
+    display: flex;
+    gap: 15px; /* Espaço menor entre colunas */
+    width: 100%;
+}
+
+.form-linha .form-group {
+    flex: 1;
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 12px; /* Reduzido o espaço entre as linhas */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.form-group label {
+    display: block;
+    text-align: center;
+    color: #1a4b9f;
+    font-size: 18px; /* Fonte levemente menor */
+    font-weight: bold;
+    margin-bottom: 5px; /* Aproximou o texto da caixa */
+}
+
+/* Campos de preenchimento mais finos */
+.form-group input[type="text"], 
+.form-group input[type="number"], 
+.form-group textarea { 
+    width: 100%; 
+    padding: 10px; /* Caixas mais finas */
+    border-radius: 12px; 
+    border: 2px solid rgba(26, 75, 159, 0.3); 
+    font-size: 16px; 
+    font-weight: bold;
+    color: #1a4b9f; 
+    background-color: rgba(255, 255, 255, 0.5); 
+    text-align: center; 
+    transition: all 0.3s ease;
+    font-family: inherit;
+    resize: none; /* Impede o usuário de esticar a textarea e estragar o layout */
+}
+
+.form-group input::placeholder, 
+.form-group textarea::placeholder {
+    color: #666666;
+    opacity: 0.7;
+    font-weight: normal;
+}
+
+.form-group input:focus, 
+.form-group textarea:focus {
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-color: #ef5e31; 
+    box-shadow: 0 0 8px rgba(239, 94, 49, 0.2);
+}
+
+.file-input {
+    width: 100%;
+    padding: 8px; /* Mais fino */
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    border: 2px dashed #1a4b9f;
+    color: #1a4b9f;
+    font-weight: bold;
+    cursor: pointer;
+    text-align: center;
+    font-size: 14px;
+}
+
+.file-input::file-selector-button {
+    background-color: #1a4b9f;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s;
+    margin-right: 15px;
+}
+
+.file-input::file-selector-button:hover {
+    background-color: #ef5e31;
+}
+
+.btn-salvar {
+    margin-top: 10px; /* Aproximado dos campos */
+    padding: 12px 35px; /* Botão levemente menor */
+    font-size: 20px;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(26, 75, 159, 0.3);
+}
+
+
+/* ===== CENTRALIZAÇÃO DOS ÍCONES DA SIDEBAR ===== */
+
+/* Garante que os links ocupem toda a largura e centralizem a imagem */
+.sidebar a {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Garante que o botão de sair no rodapé também fique perfeitamente centralizado */
+.sidebar-bottom {
+    position: absolute;
+    bottom: 20px;
+    width: 100%; /* Ocupa a largura total da sidebar */
+    display: flex;
+    justify-content: center;
+}
+
+/* ===== RODAPÉ DO CARRINHO E BOTÃO DE AVANÇAR ===== */
+.cart-footer {
+    display: flex;
+    justify-content: flex-end; /* Empurra o botão perfeitamente para a direita */
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid rgba(26, 75, 159, 0.2); /* Linha divisória subtil */
+    width: 100%;
+}
+
+.btn-finalizar-pedido {
+    background: linear-gradient(135deg, #1a4b9f 0%, #153666 100%); /* Degradê azul elegante */
+    color: white;
+    border: none;
+    padding: 16px 45px;
+    font-size: 20px;
+    border-radius: 20px; /* Cantos bem arredondados como o resto do sistema */
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 20px rgba(26, 75, 159, 0.3); /* Sombra difusa e suave */
+}
+
+/* Efeito ao passar o rato: Muda para o Laranja da vossa identidade visual e "levanta" */
+.btn-finalizar-pedido:hover {
+    background: linear-gradient(135deg, #ef5e31 0%, #c94a24 100%);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(239, 94, 49, 0.4);
 }
