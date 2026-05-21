@@ -24,7 +24,7 @@ if (!is_array($pedidosPendentes)) $pedidosPendentes = [];
 <head>
     <meta charset="UTF-8">
     <title>Autorizar Pedidos</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <?php

@@ -12,7 +12,7 @@ if (!is_array($produtos_carrinho)) $produtos_carrinho = [];
 <head>
     <meta charset="UTF-8">
     <title>Carrinho - SEMP</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <?php

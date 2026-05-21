@@ -18,7 +18,7 @@ if (!$produto || isset($produto['erro'])) {
 <head>
     <meta charset="UTF-8">
     <title>Produto - <?= htmlspecialchars($produto['nome']) ?></title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <?php

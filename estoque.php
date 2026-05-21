@@ -13,7 +13,7 @@ if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva 
 <head>
     <meta charset="UTF-8">
     <title>Estoque - SEMP</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <?php

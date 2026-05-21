@@ -10,6 +10,7 @@ session_start();
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+    <div class="login-page">
     <div class="login-container">
         <div class="login-form">
             <h1>Login</h1>
@@ -40,6 +41,7 @@ session_start();
         <div class="login-brand">
             <img src="img/SENAI_Branco.png" alt="Logo SENAI">
         </div>
+    </div>
     </div>
 
     <footer>

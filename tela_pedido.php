@@ -16,7 +16,7 @@ $produtos_selecionados = $_POST['produtos_selecionados'];
 <head>
     <meta charset="UTF-8">
     <title>Finalizar Pedido</title>
-    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <?php
