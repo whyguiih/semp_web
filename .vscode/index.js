@@ -104,9 +104,9 @@ export default {
       }
 
       // --------------------------------------------------------
-      // 9. APAGAR PRODUTOS NO CARRINHO
+      // 4. ADICIONAR PRODUTO AO CARRINHO (Atualiza carrinho = 1)
       // --------------------------------------------------------
-      else if (request.method === "GET" && path === "/carrinho/deletar") {
+      else if (request.method === "POST" && path === "/carrinho/remover") {
         const { id_produto } = await request.json();
         await env.DB.prepare("UPDATE tb_estoque SET carrinho = 0 WHERE id_estoque = ?").bind(id_produto).run();
         return new Response(JSON.stringify({ sucesso: true }), { headers: { "Content-Type": "application/json", ...corsHeaders } });

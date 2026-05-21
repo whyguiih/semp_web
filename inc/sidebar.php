@@ -1,5 +1,8 @@
 <div class="sidebar">
-        <a href="estoque.php"><img src="img/logo_menor.png" alt="Logo"></a>
+        <div class="sidebar-top">   
+            <a href="estoque.php"><img src="img/logo_menor.png" alt="Logo"></a>
+        </div>
+        
         <a href="estoque.php"><img src="img/lista.png" alt="Lista"></a>
         <a href="carrinho.php"><img src="img/carrinho.png" alt="Carrinho"></a>
         
