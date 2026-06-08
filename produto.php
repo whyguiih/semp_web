@@ -7,7 +7,13 @@ if (!isset($_GET['id']) || !isset($_SESSION['logado'])) {
 }
 
 $id_produto = $_GET['id'];
-$produto = chamarAPI('/produtos/' . $id_produto, 'GET');
+
+// Busca todos os produtos e filtra pelo ID, pois a rota /produtos retorna um array
+$todos_produtos = chamarAPI('/produtos', 'GET');
+$produto = null;
+foreach ($todos_produtos as $p) {
+    if ($p['id_estoque'] == $id_produto) { $produto = $p; break; }
+}
 
 if (!$produto || isset($produto['erro'])) {
     die("Produto não encontrado!");
