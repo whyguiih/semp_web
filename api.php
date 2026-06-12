@@ -12,14 +12,27 @@ function chamarAPI($endpoint, $metodo = 'GET', $dados = null) {
     curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $metodo);
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
     
-    // Se houver dados (POST), converte para JSON e envia
+    // 1. Criamos um array para guardar nossos cabeçalhos (Headers)
+    $headers = array();
+
+    // 2. O SEGREDO: Se o usuário estiver logado na sessão, anexa o nome dele!
+    if (isset($_SESSION['usuario'])) {
+        $headers[] = 'X-Usuario-ID: ' . $_SESSION['usuario'];
+    }
+    
+    // 3. Se houver dados (POST), converte para JSON e prepara para enviar
     if ($dados !== null) {
         $json_dados = json_encode($dados);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $json_dados);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($json_dados)
-        ));
+        
+        // Adiciona os cabeçalhos obrigatórios do JSON na nossa lista
+        $headers[] = 'Content-Type: application/json';
+        $headers[] = 'Content-Length: ' . strlen($json_dados);
+    }
+
+    // 4. Se a nossa lista de cabeçalhos não estiver vazia, aplicamos no cURL
+    if (!empty($headers)) {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
     }
 
     $resposta = curl_exec($ch);

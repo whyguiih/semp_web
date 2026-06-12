@@ -1,27 +1,20 @@
 <?php
 session_start();
-require_once 'api.php'; // Chama a sua função de comunicação com a API
+require_once 'api.php';
 
-// Verifica se o usuário está logado
-if (!isset($_SESSION['logado'])) { 
-    header("Location: index.php"); 
-    exit(); 
-}
-
-// Verifica se a página recebeu o ID do produto pela URL (via GET)
-if (isset($_GET['id'])) {
-    $id_produto = $_GET['id'];
+// Verifica se o nome do produto foi passado pela URL
+if (isset($_GET['nome'])) {
     
-    // Avisa a API para remover este produto do carrinho do usuário atual.
-    // *Lembrete: Você precisará garantir que a rota '/carrinho/remover' 
-    // exista no seu código do Cloudflare Worker!
-    chamarAPI('/carrinho/remover', 'POST', [
-        'id_produto' => $id_produto,
-        'usuario' => $_SESSION['usuario']
-    ]);
+    // Prepara os dados do jeito que a nossa API do Cloudflare espera
+    $dados = [
+        'nome_produto' => $_GET['nome']
+    ];
+
+    // Dispara a requisição para a API deletar do banco
+    chamarAPI('/carrinho/remover', 'POST', $dados);
 }
 
-// Depois de remover, manda o usuário de volta para a tela do carrinho
+// Independentemente de dar certo ou errado, volta para o carrinho
 header("Location: carrinho.php");
 exit();
 ?>

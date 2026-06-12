@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require_once 'api.php';
 
 if (!isset($_SESSION['logado'])) { header("Location: index.php"); exit(); }
@@ -12,8 +13,10 @@ if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva 
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <title>Estoque - SEMP</title>
+    <title>Estoque</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img/logo_menor.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
     <?php
@@ -23,7 +26,7 @@ if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva 
     <div class="main-content">
         <div class="search-bar">
             <img src="img/lupa.png" alt="Pesquisar">
-            <input type="text" id="input-pesquisa" placeholder="Pesquisar produtos...">
+            <input type="text" id="input-pesquisa" placeholder="Pesquisar produtos">
         </div>
 
         <div class="produtos-grid">
@@ -31,8 +34,8 @@ if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva 
                 <a href="produto.php?id=<?= htmlspecialchars($p['id_estoque']) ?>" class="produto-card">
                     
                   <img 
-    src="<?= !empty($p['foto']) ? htmlspecialchars($p['foto']) : 'https://picsum.photos/250/150?random=' . $p['id_estoque'] ?>" 
-    onerror="this.onerror=null; this.src='https://picsum.photos/250/150?random=<?= $p['id_estoque'] ?>';" 
+    src="<?= !empty($p['foto']) ? htmlspecialchars($p['foto']) : 'img/logo.png' ?>" 
+    onerror="this.onerror=null; this.src='img/logo.png';" 
     alt="Foto do produto">
                     
                     <h2><?= htmlspecialchars($p['nome']) ?></h2>

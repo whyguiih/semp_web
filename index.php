@@ -8,6 +8,7 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - SEMP</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="img/logo_menor.png" type="image/png">
 </head>
 <body>
     <div class="login-page">
@@ -45,7 +46,7 @@ session_start();
     </div>
 
     <footer>
-        Copyright &copy; Threeeo (Gabriel Artuso, Guilherme Brandalize e Larissa Gazoli) 2026. Todos os direitos reservados.
+        Copyright &copy; Threeeo (Gabriel Artuso, Guilherme Brandalize e Larissa B. Gazoli) 2026. Todos os direitos reservados.
     </footer>
 </body>
 </html>
