@@ -18,7 +18,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: estoque.php");
         exit();
     } else {
-        header("Location: index.php?erro=1");
+        // Pega a mensagem exata que o banco de dados/API enviou
+        $mensagem_erro = isset($resposta['mensagem']) ? $resposta['mensagem'] : "Erro desconhecido ao realizar login.";
+        $_SESSION['erro_login'] = $mensagem_erro;
+        
+        header("Location: index.php");
         exit();
     }
 } else {

@@ -22,14 +22,25 @@ export default {
           return new Response(JSON.stringify({ sucesso: false, mensagem: "Usuário/senha vazios." }), { status: 400, headers: { "Content-Type": "application/json", ...corsHeaders } });
         }
         
-        const stmt = env.DB.prepare("SELECT * FROM tb_usuarios WHERE usuario = ? AND senha = ?").bind(usuario, senha);
-        const { results } = await stmt.all();
+        // 1º PASSO: Busca apenas pelo nome de usuário
+        const stmtUser = env.DB.prepare("SELECT * FROM tb_usuarios WHERE usuario = ?").bind(usuario);
+        const { results } = await stmtUser.all();
 
+        // 2º PASSO: Verifica se encontrou alguém com esse nome
         if (results && results.length > 0) {
           const user = results[0];
-          return new Response(JSON.stringify({ sucesso: true, mensagem: "Login realizado com sucesso!", usuario: user.usuario, nivel_conta: user.nivel_conta, unidade: user.unidade }), { headers: { "Content-Type": "application/json", ...corsHeaders } });
+          
+          // Verifica se a senha que a pessoa digitou bate com a do banco
+          if (user.senha === senha) {
+            return new Response(JSON.stringify({ sucesso: true, mensagem: "Login realizado com sucesso!", usuario: user.usuario, nivel_conta: user.nivel_conta, unidade: user.unidade }), { headers: { "Content-Type": "application/json", ...corsHeaders } });
+          } else {
+            // Conta existe, mas errou a senha
+            return new Response(JSON.stringify({ sucesso: false, mensagem: "Usuário ou senha incorretos." }), { headers: { "Content-Type": "application/json", ...corsHeaders } });
+          }
+          
         } else {
-          return new Response(JSON.stringify({ sucesso: false, mensagem: "Usuário ou senha incorretos!" }), { headers: { "Content-Type": "application/json", ...corsHeaders } });
+          // Não encontrou o usuário cadastrado no sistema
+          return new Response(JSON.stringify({ sucesso: false, mensagem: "Esta conta não existe." }), { headers: { "Content-Type": "application/json", ...corsHeaders } });
         }
       }
 

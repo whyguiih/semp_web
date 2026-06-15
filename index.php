@@ -12,38 +12,46 @@ session_start();
 </head>
 <body>
     <div class="login-page">
-    <div class="login-container">
-        <div class="login-form">
-            <h1>Login</h1>
+        <div class="login-container">
+            <div class="login-form">
+                <h1>Login</h1>
 
-            <form action="processa_login.php" method="POST">
-                <div class="input-group">
-                    <label for="usuario">Usuário</label>
-                    <input type="text" id="usuario" name="usuario" required>
-                </div>
-                
-                <div class="input-group">
-                    <label for="senha">Senha</label>
-                    <input type="password" id="senha" name="senha" required>
-                </div>
-                
-                <?php
-            if (isset($_SESSION['erro_login'])) {
-                echo '<p style="color: red; font-weight: bold; text-align: center; margin-bottom: 15px;">' . $_SESSION['erro_login'] . '</p>';
-                unset($_SESSION['erro_login']);
-            }
-            ?>
+                <form action="processa_login.php" method="POST">
+                    <div class="input-group">
+                        <label for="usuario">Usuário</label>
+                        <input type="text" id="usuario" name="usuario" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="senha">Senha</label>
+                        <input type="password" id="senha" name="senha" required>
+                    </div>
+                    
+                    <button type="submit">Entrar</button>
+                </form>
 
-                <button type="submit">Entrar</button>
-            </form>
+            </div>
 
-        </div>
-
-        <div class="login-brand">
-            <img src="img/SENAI_Branco.png" alt="Logo SENAI">
+            <div class="login-brand">
+                <img src="img/SENAI_Branco.png" alt="Logo SENAI">
+            </div>
         </div>
     </div>
+
+    <?php if (isset($_SESSION['erro_login'])): ?>
+    <div id="custom-alert" class="custom-alert-overlay">
+        <div class="custom-alert-box">
+            <div class="custom-alert-header">Aviso</div>
+            <div class="custom-alert-body">
+                <?php echo htmlspecialchars($_SESSION['erro_login']); ?>
+            </div>
+            <div class="custom-alert-footer">
+                <button onclick="document.getElementById('custom-alert').style.display = 'none';">OK</button>
+            </div>
+        </div>
     </div>
+    <?php unset($_SESSION['erro_login']); ?>
+    <?php endif; ?>
 
     <footer>
         Copyright &copy; Threeeo (Gabriel Artuso, Guilherme Brandalize e Larissa B. Gazoli) 2026. Todos os direitos reservados.
