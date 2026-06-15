@@ -33,7 +33,7 @@ if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva 
             <?php foreach ($produtos as $p): ?>
                 <a href="produto.php?id=<?= htmlspecialchars($p['id_estoque']) ?>" class="produto-card">
                     
-                  <img 
+                <img 
     src="<?= !empty($p['foto']) ? htmlspecialchars($p['foto']) : 'img/logo.png' ?>" 
     onerror="this.onerror=null; this.src='img/logo.png';" 
     alt="Foto do produto">
