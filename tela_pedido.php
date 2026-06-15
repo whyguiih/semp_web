@@ -65,7 +65,11 @@ $produtos_selecionados = $_POST['produtos_selecionados'];
 </div>
                 <div style="display: flex; gap: 15px; margin-top: 25px; width: 100%; justify-content: center;">
                     <a href="carrinho.php" class="btn-deletar" style="text-decoration: none; padding: 12px 30px; border-radius: 15px; text-align: center; display: flex; align-items: center;">Voltar</a>
-                    <button type="submit" class="btn-primary" style="padding: 12px 30px; font-size: 18px; border-radius: 15px; box-shadow: 0 5px 15px rgba(26, 75, 159, 0.3);">Confirmar Pedido</button>
+                   <form action="fazer_pedido.php" method="POST" class="form-cadastro" onsubmit="document.getElementById('btn-confirmar').disabled = true; document.getElementById('btn-confirmar').innerText = 'Processando...';">
+    
+    <button type="submit" id="btn-confirmar" class="btn-primary" style="padding: 12px 30px; font-size: 18px; border-radius: 15px; box-shadow: 0 5px 15px rgba(26, 75, 159, 0.3);">Confirmar Pedido</button>
+    
+</form>
                 </div>
             </form>
         </div>

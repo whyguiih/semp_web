@@ -9,14 +9,17 @@
     
     <?php if ($_SESSION['nivel_conta'] == '1' || $_SESSION['nivel_conta'] == '2'): ?>
         <a href="cadastro_produto.php"><img src="img/lupa.png" alt="Cadastro"></a>
+    <?php endif; ?>
+
+    <?php if ($_SESSION['nivel_conta'] == '2'): ?>
         <a href="autorizar_pedidos.php"><img src="img/controle.png" alt="Autorizar"></a>
     <?php endif; ?>
 
     <?php if ($_SESSION['nivel_conta'] == '1'): ?>
-        <a href="visualizar_pedido.php"><img src="img/download.png" alt="Visualizar"></a>
+        <a href="vizualizar_pedido.php"><img src="img/visual.png" alt="Visualizar"></a>
     <?php endif; ?>
 
-    <?php if ($_SESSION['nivel_conta'] == '1' || $_SESSION['nivel_conta'] == '2' || $_SESSION['nivel_conta'] == '3'): ?>
+    <?php if ($_SESSION['nivel_conta'] == '3'): ?>
          <a href="conf_acesso.php"><img src="img/acesso.png" alt="Usuarios"></a>
     <?php endif; ?>
     

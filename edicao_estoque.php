@@ -79,21 +79,25 @@ if (!is_array($produtos)) {
                     </div>
                 </div>
                 
-                <button type="submit" id="btn-salvar" class="btn-primary btn-salvar" style="width: 100%;" disabled>Salvar alterações</button>
+                <div style="display: flex; gap: 15px; width: 100%; margin-top: 15px;">
+                    <button type="submit" id="btn-salvar" class="btn-primary" style="flex: 1; height: 50px; padding: 0; font-size: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none;" disabled>Salvar alterações</button>
+                    
+                    <button type="button" id="btn-excluir" class="btn-primary" style="flex: 1; height: 50px; padding: 0; font-size: 16px; border-radius: 12px; font-weight: bold; cursor: pointer; border: none; background-color: #ef5e31; color: white;" disabled>Excluir Produto</button>
+                </div>
+            
             </form>
         </div>
 
     </div>
 
     <script>
-        // Transforma o array de produtos do PHP em um objeto JavaScript utilizável
         const produtosEstoque = <?= json_encode($produtos) ?>;
         
         const selectProduto = document.getElementById('select-produto');
         const formEdicao = document.getElementById('form-edicao');
         const btnSalvar = document.getElementById('btn-salvar');
+        const btnExcluir = document.getElementById('btn-excluir'); 
         
-        // Mapeamento dos inputs do formulário
         const campos = {
             nome: document.getElementById('input-nome'),
             codigo: document.getElementById('input-codigo'),
@@ -103,25 +107,22 @@ if (!is_array($produtos)) {
             marca_ref: document.getElementById('input-marca')
         };
 
-        // Escuta quando o usuário escolhe um produto no select dropdown
         selectProduto.addEventListener('change', function() {
             const idSelecionado = this.value;
             
             if (!idSelecionado) {
-                // Se voltar para a opção vazia, limpa e bloqueia tudo de novo
                 Object.values(campos).forEach(input => {
                     input.value = '';
                     input.disabled = true;
                 });
                 btnSalvar.disabled = true;
+                btnExcluir.disabled = true; 
                 return;
             }
 
-            // Busca o produto selecionado dentro da nossa lista na memória do navegador
             const produto = produtosEstoque.find(p => p.id_estoque == idSelecionado);
             
             if (produto) {
-                // Preenche o questionário automaticamente com as informações do banco
                 campos.nome.value = produto.nome || '';
                 campos.codigo.value = produto.codigo || '';
                 campos.quant.value = produto.quant || 0;
@@ -129,13 +130,15 @@ if (!is_array($produtos)) {
                 campos.descricao.value = produto.descricao || '';
                 campos.marca_ref.value = produto.marca_ref || '';
                 
-                // Desbloqueia os inputs para edição
                 Object.values(campos).forEach(input => input.disabled = false);
                 btnSalvar.disabled = false;
+                btnExcluir.disabled = false; 
             }
         });
 
-        // Evento de salvamento do formulário
+        // ==========================================
+        // LÓGICA DE SALVAR O PRODUTO (CORRIGIDA)
+        // ==========================================
         formEdicao.addEventListener('submit', async function(evento) {
             evento.preventDefault();
             
@@ -144,17 +147,15 @@ if (!is_array($produtos)) {
 
             btnSalvar.innerText = "Atualizando dados...";
             btnSalvar.disabled = true;
+            btnExcluir.disabled = true;
 
-            // Colunas idênticas às permitidas na sua API Worker
             const colunasPermitidas = ["nome", "codigo", "descricao", "quant", "cor", "marca_ref"];
             let houveErro = false;
 
             try {
-                // Percorre campo por campo e faz a atualização na API
                 for (const coluna of colunasPermitidas) {
                     let valorAtualizado = campos[coluna].value;
                     
-                    // Garante que a quantidade seja enviada como número inteiro
                     if(coluna === 'quant') {
                         valorAtualizado = parseInt(valorAtualizado) || 0;
                     }
@@ -171,6 +172,7 @@ if (!is_array($produtos)) {
                         })
                     });
 
+                    // ESSAS LINHAS FORAM RESTAURADAS PARA EVITAR O ERRO DE SINTAXE
                     const resultado = await resposta.json();
                     if (!resultado.sucesso) {
                         houveErro = true;
@@ -184,11 +186,59 @@ if (!is_array($produtos)) {
                     alert("Atenção: Algumas colunas podem não ter sido salvas.");
                     btnSalvar.innerText = "Salvar alterações";
                     btnSalvar.disabled = false;
+                    btnExcluir.disabled = false;
                 }
 
             } catch (erroNet) {
                 alert("Erro ao conectar com a API: " + erroNet.message);
                 btnSalvar.innerText = "Salvar alterações";
+                btnSalvar.disabled = false;
+                btnExcluir.disabled = false;
+            }
+        });
+
+        // ==========================================
+        // LÓGICA DE EXCLUSÃO DO PRODUTO 
+        // ==========================================
+        btnExcluir.addEventListener('click', async function() {
+            const codigoProduto = campos.codigo.value;
+            
+            if(!codigoProduto) return;
+
+            const confirmar = confirm("🚨 ATENÇÃO: Tem certeza que deseja EXCLUIR este produto definitivamente?");
+            if(!confirmar) return;
+
+            btnExcluir.innerText = "Excluindo...";
+            btnExcluir.disabled = true;
+            btnSalvar.disabled = true;
+
+            try {
+                const resposta = await fetch('https://api-estoque.whyguiih.workers.dev/produto/deletar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        codigo: codigoProduto
+                    })
+                });
+
+                const resultado = await resposta.json();
+                
+                if (resultado.sucesso) {
+                    alert("Sucesso: Produto excluído definitivamente do estoque!");
+                    window.location.href = "estoque.php"; 
+                } else {
+                    alert("Erro ao excluir: " + (resultado.mensagem || "Erro desconhecido"));
+                    btnExcluir.innerText = "Excluir Produto";
+                    btnExcluir.disabled = false;
+                    btnSalvar.disabled = false;
+                }
+
+            } catch (erroNet) {
+                alert("Erro ao conectar com a API: " + erroNet.message);
+                btnExcluir.innerText = "Excluir Produto";
+                btnExcluir.disabled = false;
                 btnSalvar.disabled = false;
             }
         });

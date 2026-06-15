@@ -3,7 +3,10 @@
 session_start();
 require_once 'api.php';
 
-if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] != '1') { header("Location: estoque.php"); exit(); }
+if (!isset($_SESSION['logado']) || ($_SESSION['nivel_conta'] !== '1' && $_SESSION['nivel_conta'] !== '2')) { 
+    header("Location: estoque.php"); 
+    exit(); 
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $caminhoNoBanco = null;

@@ -5,6 +5,7 @@ require_once 'api.php';
 
 
 // Passa a unidade na URL da API para trazer apenas os pedidos corretos
+// Seu código PHP que lista os cards continua exatamente igual...
 $pedidosPendentes = chamarAPI('/pedidos/pendentes?unidade=' . urlencode($_SESSION['unidade']), 'GET');
 
 // Verificação de segurança (Impede o erro de Falso Positivo)
@@ -68,6 +69,16 @@ if (!is_array($pedidosPendentes) || isset($pedidosPendentes['erro']) || isset($p
 
         <?php endif; ?>
 
-        
+
+        <script>
+document.addEventListener("DOMContentLoaded", function() {
+    const totalAqui = <?= count($pedidosPendentes) ?>;
+    const usuarioAtual = "<?= $_SESSION['usuario'] ?>";
+    
+    // Salva informando que ESTE usuário já viu
+    localStorage.setItem('pedidos_vistos_' + usuarioAtual, totalAqui);
+});
+</script>
+
 </body>
 </html>

@@ -56,5 +56,10 @@ session_start();
     <footer>
         Copyright &copy; Threeeo (Gabriel Artuso, Guilherme Brandalize e Larissa B. Gazoli) 2026. Todos os direitos reservados.
     </footer>
+
+    <script>
+    // Limpa a trava de exibição da sessão do navegador ao passar pelo login
+    sessionStorage.removeItem('aviso_inicial_exibido');
+</script>
 </body>
 </html>
