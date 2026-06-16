@@ -29,7 +29,7 @@ else if (!is_array($produtos_carrinho)) {
     <?php include 'inc/sidebar.php'; ?>
 
   <div class="main-content">
-        <h1 style="color: #1a4b9f; margin-bottom: 20px;">Carrinho Teste</h1>
+        <h1 style="color: #1a4b9f; margin-bottom: 20px;">Carrinho</h1>
         
         <?php 
         if(isset($_GET['msg'])) {
@@ -48,29 +48,31 @@ else if (!is_array($produtos_carrinho)) {
             <form action="tela_pedido.php" method="POST">
                 
                 <?php foreach ($produtos_carrinho as $item): ?>
-                    <div class="cart-item-novo" style="min-height: 120px; overflow: visible !important; display: flex; align-items: center; gap: 15px; padding: 15px; margin-bottom: 15px;">
+                    <div class="cart-item-novo" style="display: flex; flex-wrap: wrap; align-items: center; gap: 20px; padding: 20px; margin-bottom: 15px; background: #ebf2ff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;">
                         
-                        <input type="checkbox" name="produtos_selecionados[]" value="<?= htmlspecialchars($item['id_estoque'] ?? '') ?>" class="cart-checkbox" checked>
+                        <input type="checkbox" name="produtos_selecionados[]" value="<?= htmlspecialchars($item['id_estoque'] ?? '') ?>" class="cart-checkbox" checked style="transform: scale(1.3); cursor: pointer;">
                         
                         <img src="<?= !empty($item['foto']) ? htmlspecialchars($item['foto']) : 'img/logo.png' ?>" 
                              onerror="this.onerror=null; this.src='img/logo.png';" 
-                             alt="Foto" class="cart-img" style="width: 80px; height: 80px; object-fit: cover;">
+                             alt="Foto" class="cart-img" style="width: 90px; height: 90px; object-fit: cover; border-radius: 10px; border: 1px solid #eaeaea;">
                         
-                        <div class="cart-info" style="flex: 1;">
-                            <h2 style="margin: 0 0 5px 0; font-size: 20px; color: #1a4b9f;"><?= htmlspecialchars($item['nome']) ?></h2>
-                            <p style="margin: 0 0 10px 0; color: #555;">Código: <?= htmlspecialchars($item['codigo']) ?></p>
+                        <div class="cart-info" style="flex: 1; min-width: 220px;">
+                            <h2 style="margin: 0 0 5px 0; font-size: 22px; color: #1a4b9f; font-weight: bold;"><?= htmlspecialchars($item['nome']) ?></h2>
+                            <p style="margin: 0 0 12px 0; font-size: 15px; color: #777;">Código: <?= htmlspecialchars($item['codigo']) ?></p>
                             
-                            <div style="background-color: #f1f5fa; padding: 8px 12px; border-radius: 8px; display: inline-flex; align-items: center; border: 1px solid #cce0ff;">
-                                <span style="font-weight: bold; color: #1a4b9f; margin-right: 10px;">Qtd Desejada:</span>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-weight: bold; color: #444; font-size: 15px;">Qtd:</span>
                                 <input type="number" name="quantidades[<?= htmlspecialchars($item['id_estoque']) ?>]" 
                                        value="<?= htmlspecialchars($item['quantidade'] ?? 1) ?>" 
                                        min="1" 
                                        max="<?= htmlspecialchars($item['estoque_max'] ?? 999) ?>" 
-                                       style="width: 80px; padding: 6px; border-radius: 5px; border: 2px solid #1a4b9f; font-size: 16px; font-weight: bold; text-align: center; color: #333;">
+                                       style="width: 80px; padding: 8px 12px; border-radius: 8px; border: 1px solid #005be3; font-size: 16px; font-weight: bold; text-align: center; color: #333; background-color: #f9fafb; outline: none; transition: all 0.3s ease;"
+                                       onfocus="this.style.borderColor='#1a4b9f'; this.style.boxShadow='0 0 0 3px rgba(26, 75, 159, 0.2)';" 
+                                       onblur="this.style.borderColor='#065ada'; this.style.boxShadow='none';">
                             </div>
                         </div>
                         
-                        <a href="remover_carrinho.php?nome=<?= urlencode($item['nome']) ?>" class="btn-deletar" style="padding: 10px 20px;">Remover</a>
+                        <a href="remover_carrinho.php?nome=<?= urlencode($item['nome']) ?>" class="btn-deletar" style="background-color: #ef5e31; color: #ffffff; padding: 12px 24px; border-radius: 10px; text-decoration: none; font-weight: bold; transition: background 0.3s; white-space: nowrap; box-shadow: 0 4px 6px rgba(239, 94, 49, 0.2);">Remover</a>
                     </div>
                 <?php endforeach; ?>
                 

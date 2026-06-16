@@ -60,18 +60,18 @@ if (!is_array($pedidosPendentes) || isset($pedidosPendentes['erro']) || isset($p
                             </p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Prioridade:</strong> <?= ucfirst(htmlspecialchars($pedido['prioridade'])) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Motivo:</strong> <?= ucfirst(htmlspecialchars($pedido['motivo'])) ?></p>
-                            <?php 
-    $corStatus = "#e06c00"; $textoStatus = "⏳ Pendente";
+                        </div>
+                        
+                        <?php 
+    $corStatus = "#e06c00"; $textoStatus = " Pendente";
     if (isset($pedido['aprovacao'])) {
-        if ($pedido['aprovacao'] == 1) { $corStatus = "#27ae60"; $textoStatus = "✅ Aprovado"; }
-        elseif ($pedido['aprovacao'] == 2) { $corStatus = "#ef5e31"; $textoStatus = "❌ Recusado"; }
+        if ($pedido['aprovacao'] == 1) { $corStatus = "#27ae60"; $textoStatus = " Aprovado"; }
+        elseif ($pedido['aprovacao'] == 2) { $corStatus = "#ef5e31"; $textoStatus = " Recusado"; }
     }
 ?>
 <p style="margin: 10px 0 0 0; font-size: 16px; font-weight: bold; color: <?= $corStatus ?>; background-color: rgba(0,0,0,0.05); padding: 8px; border-radius: 8px; display: inline-block;">
     Status: <?= $textoStatus ?>
 </p>
-                        </div>
-                        
                     </div>
                     <?php endforeach; ?>
                 

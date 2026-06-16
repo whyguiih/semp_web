@@ -72,15 +72,16 @@ if (!is_array($produtos)) {
                     <textarea id="input-descricao" rows="2" placeholder="Adicione informações sobre o produto" disabled></textarea>
                 </div>
 
-                <div class="form-group">
-    <label>URL ou Caminho da Foto:</label>
-    <input type="text" id="input-foto" placeholder="Ex: uploads/foto.png ou https://..." disabled>
-</div>
                 <div class="form-linha">
                     <div class="form-group">
                         <label>Marca de referência:</label>
                         <input type="text" id="input-marca" placeholder="Ex: Tramontina" required disabled>
                     </div>
+
+                    <div class="form-group">
+    <label>URL ou Caminho da Foto:</label>
+    <input type="text" id="input-foto" placeholder="Ex: uploads/foto.png ou https://..." disabled>
+</div>
                 </div>
                 
                 <div style="display: flex; gap: 15px; width: 100%; margin-top: 15px;">
