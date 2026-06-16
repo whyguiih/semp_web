@@ -6,9 +6,9 @@ require_once 'api.php';
 
 // Passa a unidade na URL da API para trazer apenas os pedidos corretos
 // Seu código PHP que lista os cards continua exatamente igual...
-$pedidosPendentes = chamarAPI('/pedidos/pendentes?unidade=' . urlencode($_SESSION['unidade']), 'GET');
+// Traz TODOS os pedidos da unidade, para poder exibir aprovados e recusados
+$pedidosPendentes = chamarAPI('/pedidos?unidade=' . urlencode($_SESSION['unidade']) . '&nivel=' . urlencode($_SESSION['nivel_conta']), 'GET');
 
-// Verificação de segurança (Impede o erro de Falso Positivo)
 if (!is_array($pedidosPendentes) || isset($pedidosPendentes['erro']) || isset($pedidosPendentes['mensagem'])) {
     $pedidosPendentes = [];
 }
@@ -60,6 +60,16 @@ if (!is_array($pedidosPendentes) || isset($pedidosPendentes['erro']) || isset($p
                             </p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Prioridade:</strong> <?= ucfirst(htmlspecialchars($pedido['prioridade'])) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Motivo:</strong> <?= ucfirst(htmlspecialchars($pedido['motivo'])) ?></p>
+                            <?php 
+    $corStatus = "#e06c00"; $textoStatus = "⏳ Pendente";
+    if (isset($pedido['aprovacao'])) {
+        if ($pedido['aprovacao'] == 1) { $corStatus = "#27ae60"; $textoStatus = "✅ Aprovado"; }
+        elseif ($pedido['aprovacao'] == 2) { $corStatus = "#ef5e31"; $textoStatus = "❌ Recusado"; }
+    }
+?>
+<p style="margin: 10px 0 0 0; font-size: 16px; font-weight: bold; color: <?= $corStatus ?>; background-color: rgba(0,0,0,0.05); padding: 8px; border-radius: 8px; display: inline-block;">
+    Status: <?= $textoStatus ?>
+</p>
                         </div>
                         
                     </div>

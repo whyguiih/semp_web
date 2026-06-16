@@ -72,6 +72,10 @@ if (!is_array($produtos)) {
                     <textarea id="input-descricao" rows="2" placeholder="Adicione informações sobre o produto" disabled></textarea>
                 </div>
 
+                <div class="form-group">
+    <label>URL ou Caminho da Foto:</label>
+    <input type="text" id="input-foto" placeholder="Ex: uploads/foto.png ou https://..." disabled>
+</div>
                 <div class="form-linha">
                     <div class="form-group">
                         <label>Marca de referência:</label>
@@ -104,7 +108,8 @@ if (!is_array($produtos)) {
             quant: document.getElementById('input-quant'),
             cor: document.getElementById('input-cor'),
             descricao: document.getElementById('input-descricao'),
-            marca_ref: document.getElementById('input-marca')
+            marca_ref: document.getElementById('input-marca'),
+            foto: document.getElementById('input-foto')
         };
 
         selectProduto.addEventListener('change', function() {
@@ -129,6 +134,7 @@ if (!is_array($produtos)) {
                 campos.cor.value = produto.cor || '';
                 campos.descricao.value = produto.descricao || '';
                 campos.marca_ref.value = produto.marca_ref || '';
+                campos.foto.value = produto.foto || '';
                 
                 Object.values(campos).forEach(input => input.disabled = false);
                 btnSalvar.disabled = false;
@@ -149,7 +155,8 @@ if (!is_array($produtos)) {
             btnSalvar.disabled = true;
             btnExcluir.disabled = true;
 
-            const colunasPermitidas = ["nome", "codigo", "descricao", "quant", "cor", "marca_ref"];
+           // Apenas adicione "foto" no final da lista permitida
+const colunasPermitidas = ["nome", "codigo", "descricao", "quant", "cor", "marca_ref", "foto"];
             let houveErro = false;
 
             try {

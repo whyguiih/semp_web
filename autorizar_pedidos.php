@@ -37,6 +37,22 @@ foreach ($todosPedidos as $pedido) {
     }
 }
 
+// --- LÓGICA DE ORDENAÇÃO POR PRIORIDADE ---
+function obterPesoPrioridade($prioridade) {
+    $p = strtolower(trim($prioridade ?? ''));
+    if ($p === 'alto') return 1;
+    if ($p === 'intermediário' || $p === 'intermediario' || $p === 'médio' || $p === 'medio') return 2;
+    if ($p === 'baixo') return 3;
+    return 4; // Qualquer outro valor vai para o final
+}
+
+usort($pedidosPendentes, function($a, $b) {
+    $pesoA = obterPesoPrioridade($a['prioridade'] ?? '');
+    $pesoB = obterPesoPrioridade($b['prioridade'] ?? '');
+    return $pesoA <=> $pesoB;
+});
+// ------------------------------------------
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
