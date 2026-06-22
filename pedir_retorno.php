@@ -8,27 +8,23 @@ if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] == '0') {
     exit(); 
 }
 
-// Verifica se o usuário clicou no botão "Pedir de volta"
-if (isset($_GET['acao']) && $_GET['acao'] == 'solicitar' && isset($_GET['id_emprestimo'])) {
-    
-    // Chama a nova rota da API que fará a atualização no banco
+// Processa a solicitação enviada via POST contendo a data escolhida
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_emprestimo']) && isset($_POST['data_retorno'])) {
     chamarAPI('/pedidos/solicitar_retorno', 'POST', [
-        'id_emprestimo' => $_GET['id_emprestimo']
+        'id_emprestimo' => $_POST['id_emprestimo'],
+        'data_retorno'  => $_POST['data_retorno']
     ]);
     
-    // Redireciona com mensagem de sucesso
     header("Location: pedir_retorno.php?msg=Solicitado");
     exit();
 }
 
-// Busca os produtos que a SUA unidade emprestou para outras (e que já foram aprovados)
+// Busca os produtos que a sua unidade emprestou para outras (aprovados)
 $produtosEmprestados = chamarAPI('/pedidos/emprestados?unidade=' . urlencode($_SESSION['unidade']), 'GET');
 
-// Tratamento de erro caso a API falhe
 if (!is_array($produtosEmprestados) || isset($produtosEmprestados['erro']) || isset($produtosEmprestados['mensagem'])) {
     $produtosEmprestados = [];
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
@@ -40,9 +36,7 @@ if (!is_array($produtosEmprestados) || isset($produtosEmprestados['erro']) || is
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <?php
-        include 'inc/sidebar.php';
-    ?>
+    <?php include 'inc/sidebar.php'; ?>
 
     <div class="main-content">
         <h1 style="color: #1a4b9f; margin-bottom: 25px; text-align: center; font-size: 32px;">Itens Emprestados a Outras Unidades</h1>
@@ -59,18 +53,38 @@ if (!is_array($produtosEmprestados) || isset($produtosEmprestados['erro']) || is
                     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 25px; background-color: rgba(255, 255, 255, 0.6); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); gap: 20px; border-left: 5px solid #ef5e31;">
                         
                         <div style="flex: 1; min-width: 250px;">
-                            <h2 style="color: #1a4b9f; margin: 0 0 10px 0; font-size: 24px;">Emprestado para: <?= htmlspecialchars($pedido['destinatario'] ?? 'Desconhecido') ?></h2>
+                            <h2 style="color: #1a4b9f; margin: 0 0 10px 0; font-size: 24px;">Emprestado para: <?= htmlspecialchars($pedido['unidade'] ?? 'Desconhecido') ?></h2>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Produto(s):</strong> <?= htmlspecialchars($pedido['nome_produto']) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Quantidade:</strong> <span style="background-color: #1a4b9f; color: white; padding: 2px 8px; border-radius: 5px;"><?= htmlspecialchars($pedido['quant']) ?></span></p>
-                            <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Motivo do empréstimo:</strong> <?= ucfirst(htmlspecialchars($pedido['motivo'] ?? 'Não informado')) ?></p>
+                            <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Responsável original:</strong> <?= htmlspecialchars($pedido['nome'] ?? 'Não informado') ?></p>
                         </div>
                         
-                        <div style="display: flex; gap: 15px; flex-wrap: wrap; width: auto;">
-                            <a href="pedir_retorno.php?acao=solicitar&id_emprestimo=<?= $pedido['id_emprestimo'] ?>" 
-                                class="btn-primary" 
-                                style="text-decoration:none; font-size:18px; padding:12px 30px; border-radius: 15px; text-align: center; flex: 1; min-width: 120px; background-color: #ef5e31; box-shadow: 0 4px 6px rgba(239, 94, 49, 0.2);"
-                                onclick="return confirm('Tem certeza que deseja exigir a devolução deste item?');">
-                            </a>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap; width: auto; align-items: center;">
+                            <div id="btn-container-<?= $pedido['id_emprestimo'] ?>">
+                                <button type="button" class="btn-primary" 
+                                        style="font-size:18px; padding:12px 35px; border-radius: 15px; background-color: #ef5e31; box-shadow: 0 4px 6px rgba(239, 94, 49, 0.2); border: none; color: white; cursor: pointer;"
+                                        onclick="mostrarSeletorData(<?= $pedido['id_emprestimo'] ?>)">
+                                    Retornar
+                                </button>
+                            </div>
+
+                            <form id="form-retorno-<?= $pedido['id_emprestimo'] ?>" method="POST" style="display: none; align-items: center; gap: 12px; flex-wrap: wrap;" onsubmit="return confirm('Confirmar a solicitação de devolução deste material?');">
+                                <input type="hidden" name="id_emprestimo" value="<?= $pedido['id_emprestimo'] ?>">
+                                
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    <label style="font-size: 14px; color: #1a4b9f; font-weight: bold; text-align: left;">Data desejada para retorno:</label>
+                                    <input type="date" name="data_retorno" required style="padding: 8px 12px; border-radius: 10px; border: 2px solid #ef5e31; font-size: 15px; color: #1a4b9f; font-weight: bold; background-color: #fff; outline: none;">
+                                </div>
+                                
+                                <div style="display: flex; gap: 8px; margin-top: 18px;">
+                                    <button type="submit" class="btn-primary" style="font-size:15px; padding:10px 20px; border-radius: 10px; background-color: #1a4b9f; border: none; color: white; cursor: pointer;">
+                                        Confirmar
+                                    </button>
+                                    <button type="button" class="btn-primary" style="font-size:15px; padding:10px 20px; border-radius: 10px; background-color: #777; border: none; color: white; cursor: pointer;" onclick="esconderSeletorData(<?= $pedido['id_emprestimo'] ?>)">
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
 
                     </div>
@@ -80,5 +94,17 @@ if (!is_array($produtosEmprestados) || isset($produtosEmprestados['erro']) || is
 
         <?php endif; ?>
     </div>
+
+    <script>
+    function mostrarSeletorData(id) {
+        document.getElementById('btn-container-' + id).style.display = 'none';
+        document.getElementById('form-retorno-' + id).style.display = 'flex';
+    }
+
+    function esconderSeletorData(id) {
+        document.getElementById('btn-container-' + id).style.display = 'block';
+        document.getElementById('form-retorno-' + id).style.display = 'none';
+    }
+    </script>
 </body>
 </html>

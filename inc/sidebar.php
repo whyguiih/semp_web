@@ -13,9 +13,10 @@
 
     <?php if ($_SESSION['nivel_conta'] == '2'): ?>
         <a href="autorizar_pedidos.php"><img src="img/controle.png" alt="Autorizar"></a>
-          <a href="rastreio_pedido.php"><img src="img/marker.png" alt="Ratreiar"></a>
-          <a href="computa_rastreio.php"><img src="img/envelope.png" alt="Dia"></a>
-
+        <a href="rastreio_pedido.php"><img src="img/marker.png" alt="Ratreiar"></a>
+        <a href="computa_rastreio.php"><img src="img/envelope.png" alt="Dia"></a>
+        
+        <a href="pedir_retorno.php"><img src="img/retorno.png" alt="Pedir Retorno"></a>
     <?php endif; ?>
 
     <?php if ($_SESSION['nivel_conta'] == '1'): ?>
