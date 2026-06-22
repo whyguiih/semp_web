@@ -32,8 +32,15 @@ else if (!is_array($produtos_carrinho)) {
         <h1 style="color: #1a4b9f; margin-bottom: 20px;">Carrinho</h1>
         
         <?php 
-        if(isset($_GET['msg'])) {
-            if($_GET['msg'] == 'sucesso') echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Pedido solicitado com sucesso! Aguarde autorização.</h2>";
+       if(isset($_GET['msg'])) {
+    if ($_GET['msg'] == 'sucesso') {
+        echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Pedido solicitado com sucesso! Aguarde autorização.</h2>";
+        
+        if (isset($_SESSION['codigo_pedido'])) {
+            echo "<p>O código do seu pedido é: <strong>" . htmlspecialchars($_SESSION['codigo_pedido']) . "</strong></p>";
+            unset($_SESSION['codigo_pedido']);
+        }
+    }
             if($_GET['msg'] == 'vazio') echo "<h2 style='color: #ffffff; background-color: rgba(239, 94, 49, 0.7); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Erro. Selecione pelo menos um produto para fazer o pedido.</h2>";
             if($_GET['msg'] == 'erro') {
                 echo "<h2 style='color: #ffffff; background-color: #ef5e31; padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Erro no Banco: " . htmlspecialchars($_SESSION['erro_pedido'] ?? 'Erro desconhecido') . "</h2>";

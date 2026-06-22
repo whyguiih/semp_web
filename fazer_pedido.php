@@ -19,6 +19,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['produtos_selecionados
     $motivo = $_POST['motivo'] ?? '';
     $data_postagem = date('Y-m-d H:i:s'); 
 
+       $tamanho = 10;
+$caracteresPermitidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+$resultado = "";
+
+// Pegamos o tamanho total da string menos 1 (pois o índice começa em 0)
+$maxIndex = strlen($caracteresPermitidos) - 1;
+
+for ($i = 0; $i < $tamanho; $i++) {
+    // Sorteia um número entre 0 e o índice máximo
+    $indexSorteado = random_int(0, $maxIndex); 
+    
+    // Concatena o caractere sorteado na string de resultado
+    $resultado .= $caracteresPermitidos[$indexSorteado];
+}
+
     $dados = [
         'remetente' => $nome, 
         'email' => $email,
@@ -27,22 +42,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['produtos_selecionados
         'produtos' => $produtos_selecionados,
         'prioridade' => $prioridade,
         'motivo' => $motivo,
-        'data_postagem' => $data_postagem
+        'data_postagem' => $data_postagem,
+        'codigo_pedido' => $resultado
     ];
 
     // Envia os dados para a API
     $resposta = chamarAPI('/pedidos/solicitar', 'POST', $dados);
     
-    // VERIFICAÇÃO DE ERRO: Só direciona para sucesso se a API não retornar um campo de erro
+
     if (is_array($resposta) && isset($resposta['erro'])) {
         $_SESSION['erro_pedido'] = $resposta['erro'];
         header("Location: carrinho.php?msg=erro");
         exit();
     } else {
+        // 1. GUARDA o resultado que você gerou na sessão
+        $_SESSION['codigo_pedido'] = $resultado;
+        
+        // 2. REDIRECIONA para a página do carrinho
         header("Location: carrinho.php?msg=sucesso");
         exit();
     }
-} else {
+        exit();
+    } else {
     header("Location: carrinho.php?msg=vazio");
     exit();
 }

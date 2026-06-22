@@ -30,6 +30,14 @@ if (!isset($_SESSION['logado'])) { header("Location: index.php"); exit(); }
 // Busca todos os produtos da API em vez da base de dados local
 $produtos = chamarAPI('/produtos', 'GET');
 if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva nada
+
+
+$chegadas_hoje = chamarAPI('/rastreio/hoje', 'GET');
+
+// Se der algum erro na API ou não voltar um array, garantimos que seja um array vazio para não quebrar a tela
+if (!is_array($chegadas_hoje) || isset($chegadas_hoje['erro'])) {
+    $chegadas_hoje = [];
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
@@ -142,73 +150,187 @@ const novosPedidos = totalAtual - pedidosVistos;
 </body>
 
 <?php if (isset($_SESSION['nivel_conta']) && $_SESSION['nivel_conta'] == '0'): 
-    // Busca os pedidos do usuário comum logado para monitorar retornos da API
+    // Busca os pedidos do usuário comum logado (tabela tb_emprestimo)
     $meusPedidos = chamarAPI('/pedidos?usuario=' . urlencode($_SESSION['usuario']) . '&nivel=0', 'GET');
     if (!is_array($meusPedidos)) $meusPedidos = [];
 ?>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const meusPedidos = <?= json_encode($meusPedidos) ?>;
     const usuarioAtual = "<?= $_SESSION['usuario'] ?>";
     const chaveNotificados = 'status_notificados_' + usuarioAtual;
     
-    // 1. Puxa o histórico de forma segura
     let notificados = {};
-    try {
-        const salvo = localStorage.getItem(chaveNotificados);
-        if (salvo) {
-            notificados = JSON.parse(salvo);
-        }
-    } catch (e) {
-        notificados = {}; // Se der erro no navegador, limpa o histórico
-    }
+    try { notificados = JSON.parse(localStorage.getItem(chaveNotificados)) || {}; } catch (e) {}
 
     let houveMudanca = false;
+    const hoje = new Date().toISOString().split('T')[0];
 
     meusPedidos.forEach(pedido => {
-        // 2. Converte o ID e o Status forçadamente para TEXTO (String)
-        // Isso evita o erro de comparar o número 1 com o texto "1"
         const id = String(pedido.id_emprestimo);
-        const statusAtual = String(pedido.aprovacao); 
+        
+        // Como tb_emprestimo não tem data_entrada, usamos a data_postagem (ou data_reserva)
+        // Pegamos só a parte da data "YYYY-MM-DD" cortando a hora
+        let dataPostagem = "";
+        if (pedido.data_postagem) {
+            dataPostagem = pedido.data_postagem.split(' ')[0];
+        }
 
-        // Se o status for 1 (Aprovado) ou 2 (Recusado)
-        if (statusAtual === "1" || statusAtual === "2") {
-            
-            // 3. Compara como texto. Só entra se for realmente diferente do histórico
-            if (String(notificados[id]) !== statusAtual) {
-                
-                let msg = statusAtual === "1" 
-                    ? `🎉 Seu pedido de "${pedido.nome_produto}" foi APROVADO!` 
-                    : `❌ Seu pedido de "${pedido.nome_produto}" foi RECUSADO.`;
-                
-                let corBg = statusAtual === "1" 
-                    ? "linear-gradient(to right, #00b09b, #96c93d)" 
-                    : "linear-gradient(to right, #ef5e31, #c0392b)";
+        // Se o status for "Aprovado" (1) e a postagem foi feita hoje
+        if (String(pedido.aprovacao) === "1" && dataPostagem === hoje && String(notificados[id]) !== "avisado_hoje") {
+    
+            let msg = `🎉 O seu pedido de "${pedido.nome_produto}" foi aprovado e postado hoje!`;
+                    
+            Toastify({
+                text: msg,
+                duration: 8000,
+                close: true,
+                gravity: "top",
+                position: "right",
+                style: { 
+                    background: "linear-gradient(to right, #00b09b, #96c93d)", 
+                    color: "#ffffff", 
+                    fontWeight: "bold", 
+                    borderRadius: "8px" 
+                }
+            }).showToast();
 
-                Toastify({
-                    text: msg,
-                    duration: 8000,
-                    close: true,
-                    gravity: "top",
-                    position: "right",
-                    style: { background: corBg, color: "#ffffff", fontWeight: "bold", borderRadius: "8px" }
-                }).showToast();
-
-                // Grava na memória que esse ID já foi notificado com esse status
-                notificados[id] = statusAtual;
-                houveMudanca = true;
-            }
+            notificados[id] = "avisado_hoje";
+            houveMudanca = true;
         }
     });
 
-    // 4. Só salva no navegador se uma notificação nova realmente apareceu
     if (houveMudanca) {
         localStorage.setItem(chaveNotificados, JSON.stringify(notificados));
     }
 });
 </script>
 <?php endif; ?>
-</html>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <?php 
+    // =========================================================================
+    // LÓGICA DE NOTIFICAÇÕES PARA USUÁRIOS NÍVEL 2 (GERENTES)
+    // =========================================================================
+    if (isset($_SESSION['nivel_conta']) && $_SESSION['nivel_conta'] == '2'): 
+        
+        // Busca TODOS os rastreios para podermos analisar o histórico (Atrasos e Retornos)
+        $todos_rastreios = chamarAPI('/rastreio/todos', 'GET');
+        if (!is_array($todos_rastreios)) $todos_rastreios = [];
+    ?>
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rastreios = <?= json_encode($todos_rastreios) ?>;
+        const minhaUnidade = "<?= $_SESSION['unidade'] ?>";
+        const hoje = new Date().toISOString().split('T')[0]; // Pega YYYY-MM-DD
+        
+        // 1. Puxa a memória do navegador para não repetir Toasts (Spam)
+        let vistos = {};
+        try { vistos = JSON.parse(localStorage.getItem('notificacoes_rastreio')) || {}; } catch(e) {}
+
+        // Função para formatar a data de 2024-10-25 para 25/10/2024
+        const formataDataBR = (dataStr) => dataStr.split('-').reverse().join('/');
+
+        // Função auxiliar para exibir o Toast e salvar na memória
+        function dispararAviso(idUnico, mensagem, corGradient) {
+            // Só exibe se ainda não mostramos ESSE aviso específico hoje
+            if (vistos[idUnico] !== hoje) {
+                Toastify({
+                    text: mensagem,
+                    duration: 10000,
+                    close: true,
+                    gravity: "top",
+                    position: "right",
+                    style: { background: corGradient, color: "#fff", fontWeight: "bold", borderRadius: "8px" }
+                }).showToast();
+                
+                vistos[idUnico] = hoje; // Grava que avisou hoje
+                localStorage.setItem('notificacoes_rastreio', JSON.stringify(vistos));
+            }
+        }
+
+        // 2. AGRUPAR O HISTÓRICO POR CÓDIGO DO PEDIDO
+        // Isso permite saber se o pacote está na viagem 1 ou se já foi recadastrado (viagem 2)
+        const pacotes = {};
+        rastreios.forEach(r => {
+            if (!pacotes[r.codigo]) pacotes[r.codigo] = [];
+            pacotes[r.codigo].push(r);
+        });
+
+        // 3. ANALISAR CADA PACOTE
+        for (const codigo in pacotes) {
+            const historico = pacotes[codigo];
+            
+            // O último registro inserido no banco para este código é o status atual dele
+            const viagemAtual = historico[historico.length - 1];
+
+            // Variáveis para facilitar a leitura
+            const souOrigem = (viagemAtual.unidade_original === minhaUnidade);
+            const souDestino = (viagemAtual.unidade_destino === minhaUnidade);
+
+            // Se minha unidade não tem nada a ver com esse pacote no momento, ignora e vai pro próximo
+            if (!souOrigem && !souDestino) continue;
+
+            // --- LÓGICA A: PACOTE ACABOU DE SER CONFIRMADO (TEM MAIS DE 1 REGISTRO NO BANCO) ---
+            if (historico.length > 1) {
+                // Apenas verificamos confirmações se elas aconteceram recentemente (hoje)
+                if (viagemAtual.data_saida === hoje || viagemAtual.data_entrada === hoje) {
+                    
+                    if (viagemAtual.unidade_original === viagemAtual.unidade_destino) {
+                        // REGRA: Retornou para a unidade original
+                        dispararAviso(
+                            `retorno_${codigo}`, 
+                            `🔄 O pedido ${codigo} RETORNOU à unidade original (${viagemAtual.unidade_original}).`, 
+                            "linear-gradient(to right, #e06c00, #f39c12)" // Laranja
+                        );
+                    } else {
+                        // REGRA: Chegou ao destino
+                        if (souDestino || souOrigem) {
+                            dispararAviso(
+                                `chegou_${codigo}`, 
+                                `✅ O pedido ${codigo} CHEGOU com sucesso à unidade ${viagemAtual.unidade_destino}.`, 
+                                "linear-gradient(to right, #27ae60, #2ecc71)" // Verde
+                            );
+                        }
+                    }
+                }
+                continue; // Como já foi confirmado/entregue, não precisa checar atrasos dessa viagem.
+            }
+
+            // --- LÓGICA B: PACOTE ESTÁ EM TRÂNSITO (SÓ TEM 1 REGISTRO) ---
+            
+            // REGRA: Atrasado (Passou do dia de entrada e ainda só tem 1 registro no banco)
+            if (hoje > viagemAtual.data_entrada) {
+                dispararAviso(
+                    `atraso_${codigo}`, 
+                    `⚠️ ATRASO: O pedido ${codigo} não chegou à unidade ${viagemAtual.unidade_destino} no dia ${formataDataBR(viagemAtual.data_entrada)}!`, 
+                    "linear-gradient(to right, #c0392b, #e74c3c)" // Vermelho
+                );
+            } 
+            // REGRA: Sai hoje (Avisa a Origem)
+            else if (viagemAtual.data_saida === hoje && souOrigem) {
+                dispararAviso(
+                    `saida_${codigo}`, 
+                    `📦 O pedido ${codigo} deve SAIR HOJE da sua unidade para ${viagemAtual.unidade_destino}.`, 
+                    "linear-gradient(to right, #8e44ad, #9b59b6)" // Roxo
+                );
+            }
+            // REGRA: Chega hoje (Avisa o Destino)
+            else if (viagemAtual.data_entrada === hoje && souDestino) {
+                dispararAviso(
+                    `chegada_${codigo}`, 
+                    `🚚 O pedido ${codigo} deve CHEGAR HOJE na sua unidade.`, 
+                    "linear-gradient(to right, #005c97, #363795)" // Azul
+                );
+            }
+        }
+    });
+    </script>
+    <?php endif; ?>
+
+
+
+
+
