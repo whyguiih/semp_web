@@ -117,8 +117,9 @@ usort($pedidosNormais, function($a, $b) {
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Produto(s):</strong> <?= htmlspecialchars($pedido['nome_produto']) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Quantidade:</strong> <?= htmlspecialchars($pedido['quant']) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Destino:</strong> <?= htmlspecialchars($pedido['destinatario']) ?></p>
-                            <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Prioridade:</strong> <?= ucfirst(htmlspecialchars($pedido['prioridade'])) ?></p>
+                            <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Código do pedido:</strong> <?= ucfirst(htmlspecialchars($pedido['codigo_pedido'] ?? '')) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Motivo:</strong> <?= ucfirst(htmlspecialchars($pedido['motivo'])) ?></p>
+                            
                         </div>
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; width: auto;">
                             <a href="autorizar_pedidos.php?acao=aceitar&id_emprestimo=<?= $pedido['id_emprestimo'] ?>" class="btn-primary" style="text-decoration:none; font-size:18px; padding:12px 30px; border-radius: 15px; text-align: center; flex: 1; min-width: 120px;">Liberar</a>

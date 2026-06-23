@@ -58,6 +58,7 @@ if (!is_array($pedidosPendentes) || isset($pedidosPendentes['erro']) || isset($p
                             <p style="margin: 8px 0; font-size: 15px; color: #444;">
                                 <strong style="color: #222;">Destino:</strong> <?= htmlspecialchars($pedido['destinatario'] ?? '') ?>
                             </p>
+                            <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Código do pedido:</strong> <?= ucfirst(htmlspecialchars($pedido['codigo_pedido'] ?? '')) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Prioridade:</strong> <?= ucfirst(htmlspecialchars($pedido['prioridade'])) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Motivo:</strong> <?= ucfirst(htmlspecialchars($pedido['motivo'])) ?></p>
                         </div>
