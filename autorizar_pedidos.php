@@ -69,6 +69,7 @@ usort($pedidosNormais, function($a, $b) {
         
         <?php if(isset($_GET['msg'])) echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Estado atualizado com sucesso!</h2>"; ?>
 
+        <!-- ================= BLOCO 1: SOLICITAÇÕES DE RETORNO ================= -->
         <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid #1a4b9f; padding-bottom: 8px; text-align: left;">
             Devoluções Exigidas pelas Unidades Natais
         </h2>
@@ -78,14 +79,16 @@ usort($pedidosNormais, function($a, $b) {
         <?php else: ?>
             <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 45px;">
                 <?php foreach ($pedidosRetorno as $pedido): ?>
-                    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 25px; background-color: rgba(255, 255, 255, 0.7); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); gap: 20px; border-left: 6px solid #ef5e31;">
+                    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 25px; background-color: rgba(255, 255, 255, 0.7); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); gap: 20px; border-left: 6px solid #1a4b9f;">
                         <div style="flex: 1; min-width: 250px;">
-                            <h2 style="color: #ef5e31; margin: 0 0 10px 0; font-size: 22px;">A unidade de origem pediu o item de volta!</h2>
+                            <!-- AQUI ESTÁ A ALTERAÇÃO -->
+                            <h2 style="color: #1a4b9f; margin: 0 0 10px 0; font-size: 22px;">A unidade <?= htmlspecialchars($pedido['unidade_natal'] ?? 'Origem') ?> pediu o item de volta!</h2>
+                            
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Produto(s):</strong> <?= htmlspecialchars($pedido['nome_produto']) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Quantidade emprestada:</strong> <?= htmlspecialchars($pedido['quant']) ?></p>
                             
                             <p style="margin: 8px 0 0 0; font-size: 16px; color: white; background-color: #ef5e31; display: inline-block; padding: 4px 12px; border-radius: 8px; font-weight: bold;">
-                                Deve estar de volta até: <?= !empty($pedido['data_reserva']) ? date('d/m/Y', strtotime($pedido['data_reserva'])) : 'Imediato' ?>
+                                📅 Deve estar de volta até: <?= !empty($pedido['data_reserva']) ? date('d/m/Y', strtotime($pedido['data_reserva'])) : 'Imediato' ?>
                             </p>
                         </div>
                         <div style="display: flex; width: auto;">
@@ -98,8 +101,9 @@ usort($pedidosNormais, function($a, $b) {
             </div>
         <?php endif; ?>
 
+        <!-- ================= BLOCO 2: PEDIDOS TRADICIONAIS ================= -->
         <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid rgba(26, 75, 159, 0.3); padding-bottom: 8px; text-align: left;">
-            Novos Pedidos de Empréstimo Pendentes
+            📦 Novos Pedidos de Empréstimo Pendentes
         </h2>
 
         <?php if(empty($pedidosNormais)): ?>
