@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     $dados = [
         'nome' => $nome_formatado,
-        'codigo' => $_POST['codigo'],
+        'codigo' => gerarCodigoSemp($_SESSION['unidade'], 2),
         'descricao' => $_POST['descricao'],
         'quant' => (int)$_POST['quant'],
         'uni_natal' => $_POST['uni_natal'],

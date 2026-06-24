@@ -19,20 +19,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['produtos_selecionados
     $motivo = $_POST['motivo'] ?? '';
     $data_postagem = date('Y-m-d H:i:s'); 
 
-       $tamanho = 10;
-$caracteresPermitidos = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-$resultado = "";
-
-// Pegamos o tamanho total da string menos 1 (pois o índice começa em 0)
-$maxIndex = strlen($caracteresPermitidos) - 1;
-
-for ($i = 0; $i < $tamanho; $i++) {
-    // Sorteia um número entre 0 e o índice máximo
-    $indexSorteado = random_int(0, $maxIndex); 
-    
-    // Concatena o caractere sorteado na string de resultado
-    $resultado .= $caracteresPermitidos[$indexSorteado];
-}
+       // Gera o código do pedido (O dígito 3 no final indica que é um pedido)
+    $resultado = gerarCodigoSemp($_SESSION['unidade'], 3);
 
     $dados = [
         'remetente' => $nome, 
