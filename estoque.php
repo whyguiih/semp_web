@@ -27,16 +27,21 @@ if (isset($_SESSION['nivel_conta']) && ($_SESSION['nivel_conta'] == 1 || $_SESSI
 
 if (!isset($_SESSION['logado'])) { header("Location: index.php"); exit(); }
 
-// Busca todos os produtos da API em vez da base de dados local
-$produtos = chamarAPI('/produtos', 'GET');
-if (!is_array($produtos)) $produtos = []; // Proteção caso a API não devolva nada
+$produtos_individuais = chamarAPI('/produtos', 'GET');
+if (!is_array($produtos_individuais)) $produtos_individuais = [];
 
-
-$chegadas_hoje = chamarAPI('/rastreio/hoje', 'GET');
-
-// Se der algum erro na API ou não voltar um array, garantimos que seja um array vazio para não quebrar a tela
-if (!is_array($chegadas_hoje) || isset($chegadas_hoje['erro'])) {
-    $chegadas_hoje = [];
+// Agrupa os produtos pelo nome para exibição consolidada na vitrine
+$produtos = [];
+foreach ($produtos_individuais as $p) {
+    $nomeChave = mb_strtolower(trim($p['nome']), 'UTF-8');
+    
+    if (!isset($produtos[$nomeChave])) {
+        // Usa a primeira unidade encontrada como modelo visual do card
+        $produtos[$nomeChave] = $p;
+        $produtos[$nomeChave]['quant'] = 0;
+    }
+    // Soma 1 para cada registro individual com o mesmo nome encontrado no estoque
+    $produtos[$nomeChave]['quant'] += 1;
 }
 ?>
 <!DOCTYPE html>

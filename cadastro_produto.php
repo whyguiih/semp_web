@@ -20,30 +20,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     
     $nome_formatado = mb_strtoupper(mb_substr($_POST['nome'], 0, 1, 'UTF-8'), 'UTF-8') . mb_substr($_POST['nome'], 1, null, 'UTF-8');
+    $quant_solicitada = (int)$_POST['quant'];
     
-    $dados = [
-        'nome' => $nome_formatado,
-        'codigo' => gerarCodigoSemp($_SESSION['unidade'], 2),
-        'descricao' => $_POST['descricao'],
-        'quant' => (int)$_POST['quant'],
-        'uni_natal' => $_POST['uni_natal'],
-        'marca_ref' => $_POST['marca_ref'],
-        'cor' => $_POST['cor'],
-        'descricao_detalhada' => $_POST['descricao_detalhada'],
-        'foto' => $caminhoNoBanco
-    ];
+    $houveErro = false;
+    $unidadesCadastradas = 0;
 
-    // ===== AQUI ESTÁ A MÁGICA: CAPTURAR O RESULTADO =====
-    $respostaAPI = chamarAPI('/produto/cadastrar', 'POST', $dados);
-    
-    // Vamos verificar o que a API respondeu
-    if (is_array($respostaAPI) && isset($respostaAPI['erro'])) {
-        // Se a Cloudflare enviou um erro, vamos exibi-lo!
-        $mensagem_erro = "A API recusou: " . $respostaAPI['erro'];
-    } elseif ($respostaAPI === null) {
-        $mensagem_erro = "Erro de conexão: A API da Cloudflare não respondeu.";
-    } else {
-        $mensagem = "Produto cadastrado com sucesso!";
+    // Laço de repetição: insere cada unidade como um registro único e individual no banco
+    for ($i = 0; $i < $quant_solicitada; $i++) {
+        $dados = [
+            'nome' => $nome_formatado,
+            'codigo' => gerarCodigoSemp($_SESSION['unidade'], 2), // Gera o código XXXXX-XXXXXXXXXX único para esta unidade
+            'descricao' => $_POST['descricao'],
+            'quant' => 1, // Cada linha representa exatamente 1 unidade física
+            'uni_natal' => $_POST['uni_natal'],
+            'marca_ref' => $_POST['marca_ref'],
+            'cor' => $_POST['cor'],
+            'descricao_detalhada' => $_POST['descricao_detalhada'],
+            'foto' => $caminhoNoBanco
+        ];
+
+        $respostaAPI = chamarAPI('/produto/cadastrar', 'POST', $dados);
+        
+        if (is_array($respostaAPI) && isset($respostaAPI['erro'])) {
+            $mensagem_erro = "A API recusou a unidade " . ($i + 1) . ": " . $respostaAPI['erro'];
+            $houveErro = true;
+            break;
+        } elseif ($respostaAPI === null) {
+            $mensagem_erro = "Erro de conexão: A API da Cloudflare não respondeu na unidade " . ($i + 1) . ".";
+            $houveErro = true;
+            break;
+        } else {
+            $unidadesCadastradas++;
+        }
+    }
+
+    if (!$houveErro) {
+        $mensagem = "Sucesso: $unidadesCadastradas unidades cadastradas individualmente com códigos únicos!";
     }
 }
 ?>

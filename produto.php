@@ -8,15 +8,24 @@ if (!isset($_GET['id']) || !isset($_SESSION['logado'])) {
 
 $id_produto = $_GET['id'];
 
-// Busca todos os produtos e filtra pelo ID, pois a rota /produtos retorna um array
 $todos_produtos = chamarAPI('/produtos', 'GET');
 $produto = null;
+
+// Encontra a unidade específica clicada para carregar os metadados (Foto, descrição, etc)
 foreach ($todos_produtos as $p) {
     if ($p['id_estoque'] == $id_produto) { $produto = $p; break; }
 }
 
 if (!$produto || isset($produto['erro'])) {
     die("Produto não encontrado!");
+}
+
+// Calcula o estoque real contando quantas unidades idênticas existem registradas
+$quantidade_total_disponivel = 0;
+foreach ($todos_produtos as $p) {
+    if (strcasecmp(trim($p['nome']), trim($produto['nome'])) === 0) {
+        $quantidade_total_disponivel++;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -64,7 +73,7 @@ if (!$produto || isset($produto['erro'])) {
                     <p style="font-size: 16px; color: #333;"><strong>Cor:</strong><br><?= htmlspecialchars($produto['cor'] ?? 'Não informada') ?></p>
                 </div>
 
-                <p style="font-size: 18px; color: #1a4b9f; margin-bottom: 15px;"><strong>Disponível em estoque:</strong> <span style="font-size: 22px; font-weight: bold; background: #e06c00; color: white; padding: 2px 10px; border-radius: 8px;"><?= htmlspecialchars($produto['quant'] ?? '0') ?></span></p>
+                <p style="font-size: 18px; color: #1a4b9f; margin-bottom: 15px;"><strong>Disponível em estoque:</strong> <span style="font-size: 22px; font-weight: bold; background: #e06c00; color: white; padding: 2px 10px; border-radius: 8px;"><?= $quantidade_total_disponivel ?></span></p>
                 
                 <div style="background-color: rgba(26, 75, 159, 0.05); padding: 15px; border-radius: 12px; border: 1px solid rgba(26, 75, 159, 0.1);">
                     <p style="font-size: 16px; color: #333; margin-bottom: 8px;"><strong>Descrição:</strong> <?= htmlspecialchars($produto['descricao'] ?? 'Não informada') ?></p>
@@ -85,7 +94,7 @@ if (!$produto || isset($produto['erro'])) {
             <div style="display: flex; align-items: center; background-color: #1a4b9f; border-radius: 15px; overflow: hidden; height: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <button type="button" onclick="mudarQtd(-1)" style="background: transparent; border: none; color: white; font-size: 24px; font-weight: bold; width: 45px; height: 100%; cursor: pointer;">-</button>
                 
-                <input type="number" id="quantidade_tela" name="quantidade" value="1" min="1" max="<?= $produto['quant'] ?>" onblur="validarQtd()" style="width: 60px; height: 100%; border: none; text-align: center; font-size: 18px; font-weight: bold; color: #1a4b9f; outline: none;">
+                <input type="number" id="quantidade_tela" name="quantidade" value="1" min="1" max="<?= $quantidade_total_disponivel ?>" onblur="validarQtd()" style="width: 60px; height: 100%; border: none; text-align: center; font-size: 18px; font-weight: bold; color: #1a4b9f; outline: none;">
                 
                 <button type="button" onclick="mudarQtd(1)" style="background: transparent; border: none; color: white; font-size: 24px; font-weight: bold; width: 45px; height: 100%; cursor: pointer;">+</button>
             </div>
