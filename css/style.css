@@ -276,6 +276,11 @@ input:-webkit-autofill:active {
 .cart-item-novo, .cart-item {
     display: flex; align-items: center; padding: 15px 0; margin-bottom: 15px;
     border-bottom: 2px solid rgba(26, 75, 159, 0.2); gap: 20px;
+    /* Efeito transparente forçado */
+    background-color: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    border-radius: 15px !important;
 }
 .cart-checkbox { width: 28px; height: 28px; cursor: pointer; accent-color: #1a4b9f; }
 .cart-img { width: 80px; height: 80px; object-fit: cover; border-radius: 12px; }
@@ -310,22 +315,16 @@ input:-webkit-autofill:active {
    7. FORMULÁRIOS ELEVADOS (CADASTRO E PEDIDOS)
    Alinhamento reto, limpo e profissional
    ========================================================================= */
-/* =========================================================================
-   7. FORMULÁRIOS ELEVADOS (CADASTRO E PEDIDOS - OTIMIZADO PARA NOTEBOOK)
-   Remove a sobra da esquerda e compacta o tamanho para sumir o scrollbar
-   ========================================================================= */
-/* =========================================================================
-   7. FORMULÁRIOS ELEVADOS (CADASTRO E PEDIDOS)
-   ========================================================================= */
 .cadastro-container {
-    background-color: rgba(255, 255, 255, 0.4); 
+    background-color: rgba(255, 255, 255, 0.4) !important; 
+    backdrop-filter: blur(10px) !important; /* Efeito de vidro fosco */
     padding: 30px 40px; 
     border-radius: 25px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1); 
-    border: 1px solid rgba(255, 255, 255, 0.5); 
+    border: 1px solid rgba(255, 255, 255, 0.5) !important; 
     width: 100%; 
-    max-width: 750px; /* Voltou a ser um cartão de tamanho fixo */
-    margin: auto; /* Centraliza perfeitamente no meio da tela no modo Flex */
+    max-width: 750px; 
+    margin: auto; 
 }
 
 .cadastro-container h1, .cadastro-container h2 {
