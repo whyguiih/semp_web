@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 require_once 'api.php';
 
@@ -25,13 +24,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $houveErro = false;
     $unidadesCadastradas = 0;
 
-    // Laço de repetição: insere cada unidade como um registro único e individual no banco
     for ($i = 0; $i < $quant_solicitada; $i++) {
         $dados = [
             'nome' => $nome_formatado,
-            'codigo' => gerarCodigoSemp($_SESSION['unidade'], 2), // Gera o código XXXXX-XXXXXXXXXX único para esta unidade
+            'codigo' => gerarCodigoSemp($_SESSION['unidade'], 2), 
             'descricao' => $_POST['descricao'],
-            'quant' => 1, // Cada linha representa exatamente 1 unidade física
+            'quant' => 1, 
             'uni_natal' => $_POST['uni_natal'],
             'marca_ref' => $_POST['marca_ref'],
             'cor' => $_POST['cor'],
@@ -70,33 +68,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-  
-
-<?php if(isset($mensagem)) echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 10px 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; width: 100%; font-size: 18px;'>$mensagem</h2>"; ?>
-
-<?php if(isset($mensagem_erro)) echo "<h2 style='color: #ffffff; background-color: #ef5e31; padding: 10px 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; width: 100%; font-size: 18px;'>$mensagem_erro</h2>"; ?>
-    <?php
-        include 'inc/sidebar.php';
-    ?>
+    <?php include 'inc/sidebar.php'; ?>
     
-  <div class="main-content" style="display: flex; justify-content: center; align-items: center; padding: 0;">
+    <div class="main-content" style="display: flex; justify-content: center; align-items: center; padding: 0;">
         
         <div class="cadastro-container">
             <h1 style="color: #1a4b9f; margin-bottom: 15px; text-align: center; font-size: 28px;">Cadastrar novo produto</h1>
             
             <?php if(isset($mensagem)) echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 10px 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; width: 100%; font-size: 18px;'>$mensagem</h2>"; ?>
+            <?php if(isset($mensagem_erro)) echo "<h2 style='color: #ffffff; background-color: #ef5e31; padding: 10px 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; width: 100%; font-size: 18px;'>$mensagem_erro</h2>"; ?>
 
             <form method="POST" enctype="multipart/form-data" class="form-cadastro">
                 
-                <div class="form-linha">
-                    <div class="form-group">
-                        <label>Nome do produto:</label>
-                        <input type="text" name="nome" placeholder="Ex: Alicate de pressão" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Código do produto:</label>
-                        <input type="text" name="codigo" placeholder="Ex: 3213" required>
-                    </div>
+                <div class="form-group">
+                    <label>Nome do produto:</label>
+                    <input type="text" name="nome" placeholder="Ex: Alicate de pressão" required>
                 </div>
                 
                 <div class="form-linha">
@@ -115,21 +101,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <textarea name="descricao" rows="2" placeholder="Adicione informações sobre o produto"></textarea>
                 </div>
 
-                 <div class="form-group">
+                <div class="form-group">
                     <label>Descrição detalhada do produto:</label>
                     <textarea name="descricao_detalhada" rows="2" placeholder="Adicione detalhes sobre o produto"></textarea>
                 </div>
-               <div class="form-linha">
-    <div class="form-group">
-        <label>Cor do produto:</label>
-        <input type="text" name="cor" placeholder="Ex: Vermelho">
-    </div>
 
-    <div class="form-group">
-        <label>Marca de referência:</label>
-        <input type="text" name="marca_ref" placeholder="Ex: Tramontina" required>
-    </div>
-</div>
+                <div class="form-linha">
+                    <div class="form-group">
+                        <label>Cor do produto:</label>
+                        <input type="text" name="cor" placeholder="Ex: Vermelho">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Marca de referência:</label>
+                        <input type="text" name="marca_ref" placeholder="Ex: Tramontina" required>
+                    </div>
+                </div>
                 
                 <div class="form-group">
                     <label>Foto (Obrigatório):</label>
@@ -137,9 +124,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
                 
                 <div style="display: flex; gap: 15px; width: 100%; margin-top: 10px;">
-    <button type="submit" class="btn-primary btn-salvar" style="flex: 1; margin-top: 0;">Adicionar ao estoque</button>
-    <a href="edicao_estoque.php" class="btn-primary btn-danger" style="flex: 1; text-decoration: none; padding: 12px 35px; font-size: 20px; border-radius: 15px; display: flex; align-items: center; justify-content: center;">Editar estoque</a>
-</div>
+                    <button type="submit" class="btn-primary btn-salvar" style="flex: 1; margin-top: 0;">Adicionar ao estoque</button>
+                    <a href="edicao_estoque.php" class="btn-primary btn-danger" style="flex: 1; text-decoration: none; padding: 12px 35px; font-size: 20px; border-radius: 15px; display: flex; align-items: center; justify-content: center;">Editar estoque</a>
+                </div>
             </form>
         </div>
 
