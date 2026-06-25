@@ -33,16 +33,31 @@ else if (!is_array($produtos_carrinho)) {
         
         <?php 
         if(isset($_GET['msg'])) {
-            if ($_GET['msg'] == 'sucesso') {
-                echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Pedido solicitado com sucesso! Aguarde autorização.</h2>";
-                
-                if (isset($_SESSION['codigo_pedido'])) {
-                    echo "<p>O código do seu pedido é: <strong>" . htmlspecialchars($_SESSION['codigo_pedido']) . "</strong></p>";
-                    unset($_SESSION['codigo_pedido']);
-                }
+            if ($_GET['msg'] == 'sucesso' && isset($_SESSION['codigo_pedido'])) {
+                $codigo_gerado = htmlspecialchars($_SESSION['codigo_pedido']);
+                echo "
+                <div id='toast-sucesso' style='position: fixed; top: 25px; right: 25px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 20px 25px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 10000; border-left: 6px solid #ef5e31; animation: slideIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), fadeOut 0.5s ease-out 10s forwards; min-width: 320px;'>
+                    <div style='display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;'>
+                        <strong style='font-size: 18px; color: #1a4b9f;'>🎉 Pedido Concluído!</strong>
+                        <button onclick=\"document.getElementById('toast-sucesso').style.display='none'\" style='background: none; border: none; color: #999; font-size: 24px; cursor: pointer; transition: 0.2s;' onmouseover=\"this.style.color='#ef5e31'\" onmouseout=\"this.style.color='#999'\">&times;</button>
+                    </div>
+                    <p style='margin: 0; font-size: 15px; color: #555;'>Guarde o código do seu pedido:</p>
+                    <p style='margin: 8px 0 0 0; font-size: 24px; font-weight: bold; color: #ef5e31; letter-spacing: 1px; user-select: all;'>{$codigo_gerado}</p>
+                </div>
+                <style>
+                    @keyframes slideIn { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+                    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
+                </style>
+                ";
+                unset($_SESSION['codigo_pedido']); // Limpa a sessão após exibir
             }
-            if($_GET['msg'] == 'vazio') echo "<h2 style='color: #ffffff; background-color: rgba(239, 94, 49, 0.7); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Erro. Selecione pelo menos um produto para fazer o pedido.</h2>";
-            if($_GET['msg'] == 'erro') {
+            else if ($_GET['msg'] == 'sucesso') {
+                echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Pedido solicitado com sucesso! Aguarde autorização.</h2>";
+            }
+            else if($_GET['msg'] == 'vazio') {
+                echo "<h2 style='color: #ffffff; background-color: rgba(239, 94, 49, 0.7); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Erro. Selecione pelo menos um produto para fazer o pedido.</h2>";
+            }
+            else if($_GET['msg'] == 'erro') {
                 echo "<h2 style='color: #ffffff; background-color: #ef5e31; padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Erro no Banco: " . htmlspecialchars($_SESSION['erro_pedido'] ?? 'Erro desconhecido') . "</h2>";
                 unset($_SESSION['erro_pedido']);
             }
