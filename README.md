@@ -97,7 +97,7 @@ O sistema segmenta de forma rigorosa as permissões na aplicação:
 
 ---
 
-## 📌 Informações do Projeto
+## Informações do Projeto
 
 | Propriedade | Detalhe |
 | :--- | :--- |
@@ -107,7 +107,7 @@ O sistema segmenta de forma rigorosa as permissões na aplicação:
 
 ---
 
-## 🎯 Posicionamento do Módulo no Projeto SEMP
+## Posicionamento do Módulo no Projeto SEMP
 
 Este documento descreve o **Terminal IoT de Triagem e Controle de Estoque**, um subsistema de hardware embarcado que compõe o Projeto SEMP. É importante destacar que este terminal não corresponde ao SEMP como um todo: o SEMP é o sistema completo de gerenciamento de estoque, do qual este dispositivo é apenas o módulo físico responsável pela coleta de dados em campo, atuando como ponta de entrada (*front-end* físico) que alimenta o banco de dados central do sistema.
 
@@ -115,7 +115,7 @@ A arquitetura do terminal foi concebida de forma simplificada, com processamento
 
 ---
 
-## 🔄 Visão Geral Funcional
+## Visão Geral Funcional
 
 O fluxo de operação do terminal ocorre da seguinte maneira:
 
@@ -127,7 +127,7 @@ O fluxo de operação do terminal ocorre da seguinte maneira:
 
 ---
 
-## ⚙️ Especificações de Hardware dos Componentes
+## Especificações de Hardware dos Componentes
 
 ### 1. Raspberry Pi Pico — Controlador Geral
 Unidade central de processamento lógico local. Responsável pela leitura do módulo RFID, *debounce* e interpretação das chaves tácteis, atualização do *display* e formatação das *strings* de dados para envio ao computador via USB. É baseado no microcontrolador **RP2040** (Dual-core ARM Cortex-M0+, até 133MHz), com 264KB de SRAM integrada e 2MB de memória Flash para armazenamento do *firmware*.
@@ -146,7 +146,7 @@ Chaves de contato táctil tipo *push-button*, integradas diretamente aos pinos d
 
 ---
 
-## 💰 Planilha de Custos Estimados
+## Planilha de Custos Estimados
 
 *Levantamento orçamentário médio praticado no mercado brasileiro para aquisição dos componentes individuais, com finalidade de prototipagem do terminal.*
 
@@ -166,7 +166,7 @@ Chaves de contato táctil tipo *push-button*, integradas diretamente aos pinos d
 
 ---
 
-## 🔌 Esquema de Ligações Eletroeletrônicas
+## Esquema de Ligações Eletroeletrônicas
 
 O sistema elétrico foi projetado sob lógica de compatibilidade de sinal em **3.3V**. Dessa forma, as comunicações entre os barramentos dispensam o uso de conversores de nível lógico bidirecionais.
 
@@ -200,7 +200,7 @@ O sistema elétrico foi projetado sob lógica de compatibilidade de sinal em **3
 
 ---
 
-## ⚠️ Recomendações Técnicas de Infraestrutura Elétrica
+## Recomendações Técnicas de Infraestrutura Elétrica
 
 Para assegurar a confiabilidade do terminal em ambiente de estoque, devem-se observar as seguintes práticas de engenharia de hardware:
 
