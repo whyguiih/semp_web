@@ -43,6 +43,11 @@ if (!is_array($produtosEmprestados) || isset($produtosEmprestados['erro']) || is
         
         <?php if(isset($_GET['msg']) && $_GET['msg'] == 'Solicitado') echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Retorno do item solicitado com sucesso!</h2>"; ?>
 
+        <div class='search-bar'>
+            <img src="img/lupa.png" alt="Pesquisar">
+            <input type="text" id="input-pesquisar" placeholder="Pesquisar pedidos...">
+        </div>
+
         <?php if(empty($produtosEmprestados)): ?>
             <h2 style="color: #333; text-align: center; margin-top: 50px;">Sua unidade não possui itens emprestados ativos no momento.</h2>
         <?php else: ?>

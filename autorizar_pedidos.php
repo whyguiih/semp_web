@@ -69,6 +69,11 @@ usort($pedidosNormais, function($a, $b) {
         
         <?php if(isset($_GET['msg'])) echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Estado atualizado com sucesso!</h2>"; ?>
 
+        <div class='search-bar'>
+            <img src="img/lupa.png" alt="Pesquisar">
+            <input type="text" id="input-pesquisar" placeholder="Pesquisar pedidos...">
+        </div>
+
         <!-- ================= BLOCO 1: SOLICITAÇÕES DE RETORNO ================= -->
         <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid #1a4b9f; padding-bottom: 8px; text-align: left;">
             Devoluções Exigidas pelas Unidades Natais
