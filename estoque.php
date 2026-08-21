@@ -59,10 +59,11 @@ foreach ($produtos_individuais as $p) {
         include 'inc/sidebar.php';
     ?>
 
-    <div class="main-content">
-        <div class="search-bar">
+    <div class="main-content" style='width: 100%;'>
+
+        <div class='search-bar'>
             <img src="img/lupa.png" alt="Pesquisar">
-            <input type="text" id="input-pesquisa" placeholder="Pesquisar produtos">
+            <input type="text" id="input-pesquisar" placeholder="Pesquisar pedidos...">
         </div>
 
         <div class="produtos-grid">
