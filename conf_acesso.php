@@ -69,22 +69,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 <div class="form-grid">
                     <div class="input-group">
-                        <label>Nome de usuário:</label>
+                        <label>Nome de usuário:*</label>
                         <input type="text" name="usuario" placeholder="Ex: admin_garibaldi">
                     </div>
 
                     <div class="input-group">
-                        <label>Senha:</label>
+                        <label>Senha:*</label>
                         <input type="password" name="senha" placeholder="Ex: 3213">
                     </div>
 
                     <div class="input-group">
-                        <label>Nível de acesso:</label>
+                        <label>Nível de acesso:*</label>
                         <input type="number" name="nivel" placeholder="0">
                     </div>
 
                     <div class="input-group">
-                        <label>Unidade:</label>
+                        <label>Unidade:*</label>
                         <input type="text" name="unidade" placeholder="Garibaldi">
                     </div>
                 </div>

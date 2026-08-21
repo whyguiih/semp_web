@@ -5,8 +5,7 @@ require_once 'api.php';
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Pega os dados enviados pelo formulário da tela do produto
     $dados = [
-        'nome_produto' => $_POST['nome_produto'], 
-        'quantidade' => $_POST['quantidade']
+        'nome_produto' => $_POST['nome_produto']
     ];
 
     // 1. Em vez de só chamar a API, nós guardamos a resposta dela
