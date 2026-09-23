@@ -2,7 +2,10 @@
 session_start();
 require_once 'api.php';
 
-if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] == '0') { header("Location: estoque.php"); exit(); }
+if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] == '0') {
+    header("Location: estoque.php");
+    exit();
+}
 
 if (isset($_GET['acao']) && isset($_GET['id_emprestimo'])) {
     // Se a ação for ciente, mudamos o status para 4 (Deletado do painel ativo/Finalizado)
@@ -20,21 +23,29 @@ if (isset($_GET['acao']) && isset($_GET['id_emprestimo'])) {
     exit();
 }
 
-// Passa a unidade para buscar tanto os normais quanto as solicitações de retorno
+// Busca os pedidos da API
 $pedidosPendentes = chamarAPI('/pedidos/pendentes?unidade=' . urlencode($_SESSION['unidade']), 'GET');
 
 if (!is_array($pedidosPendentes) || isset($pedidosPendentes['erro']) || isset($pedidosPendentes['mensagem'])) {
     $pedidosPendentes = [];
 }
 
-// Separa os arrays dinamicamente de acordo com o status
+// 1. SEPARANDO EM 3 NÍVEIS DIFERENTES
 $pedidosNormais = [];
 $pedidosRetorno = [];
+$pedidosRastreio = []; // Novo Array para Rastreio
 
 foreach ($pedidosPendentes as $pedido) {
-    if (isset($pedido['aprovacao']) && $pedido['aprovacao'] == 3) {
+    $status = $pedido['aprovacao'] ?? 0;
+
+    if ($status == 3) {
+        // NÍVEL 1: Devoluções
         $pedidosRetorno[] = $pedido;
+    } elseif ($status == 1) {
+        // NÍVEL 3: Aprovados (Aguardando Rastreio)
+        $pedidosRastreio[] = $pedido;
     } else {
+        // NÍVEL 2: Pendentes de Autorização (Status 0 ou outro)
         $pedidosNormais[] = $pedido;
     }
 }
@@ -51,6 +62,7 @@ function obterPesoPrioridade($prioridade) {
 usort($pedidosNormais, function($a, $b) {
     return obterPesoPrioridade($a['prioridade'] ?? '') <=> obterPesoPrioridade($b['prioridade'] ?? '');
 });
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-PT">
@@ -63,14 +75,14 @@ usort($pedidosNormais, function($a, $b) {
 </head>
 <body>
     <?php include 'inc/sidebar.php'; ?>
-
+    
     <div class="main-content">
         <h1 style="color: #1a4b9f; margin-bottom: 25px; text-align: center; font-size: 32px;">Painel de Gerenciamento e Autorizações</h1>
         
         <?php if(isset($_GET['msg'])) echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Estado atualizado com sucesso!</h2>"; ?>
 
-        <!-- ================= BLOCO 1: SOLICITAÇÕES DE RETORNO ================= -->
-        <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid #1a4b9f; padding-bottom: 8px; text-align: left;">
+        <!-- ================= NÍVEL 1: SOLICITAÇÕES DE RETORNO ================= -->
+        <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid rgba(26, 75, 159, 0.3); padding-bottom: 8px; text-align: left;">
             Devoluções Exigidas pelas Unidades Natais
         </h2>
         
@@ -81,14 +93,12 @@ usort($pedidosNormais, function($a, $b) {
                 <?php foreach ($pedidosRetorno as $pedido): ?>
                     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 25px; background-color: rgba(255, 255, 255, 0.7); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); gap: 20px; border-left: 6px solid #1a4b9f;">
                         <div style="flex: 1; min-width: 250px;">
-                            <!-- AQUI ESTÁ A ALTERAÇÃO -->
-                            <h2 style="color: #1a4b9f; margin: 0 0 10px 0; font-size: 22px;">A unidade <?= htmlspecialchars($pedido['unidade_natal'] ?? 'Origem') ?> solicitouo item de volta.</h2>
-                            
+                            <h2 style="color: #1a4b9f; margin: 0 0 10px 0; font-size: 22px;">A unidade <?= htmlspecialchars($pedido['unidade_natal'] ?? 'Origem') ?> solicitou o item de volta.</h2>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Produto(s):</strong> <?= htmlspecialchars($pedido['nome_produto']) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Quantidade emprestada:</strong> <?= htmlspecialchars($pedido['quant']) ?></p>
                             
                             <p style="margin: 8px 0 0 0; font-size: 16px; color: white; background-color: #ef5e31; display: inline-block; padding: 4px 12px; border-radius: 8px; font-weight: bold;">
-                                📅 Deve estar de volta até: <?= !empty($pedido['data_reserva']) ? date('d/m/Y', strtotime($pedido['data_reserva'])) : 'Imediato' ?>
+                                  Deve estar de volta até: <?= !empty($pedido['data_reserva']) ? date('d/m/Y', strtotime($pedido['data_reserva'])) : 'Imediato' ?>
                             </p>
                         </div>
                         <div style="display: flex; width: auto;">
@@ -101,15 +111,15 @@ usort($pedidosNormais, function($a, $b) {
             </div>
         <?php endif; ?>
 
-        <!-- ================= BLOCO 2: PEDIDOS TRADICIONAIS ================= -->
+        <!-- ================= NÍVEL 2: PEDIDOS TRADICIONAIS ================= -->
         <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid rgba(26, 75, 159, 0.3); padding-bottom: 8px; text-align: left;">
              Novos Pedidos de Empréstimo Pendentes
         </h2>
-
+        
         <?php if(empty($pedidosNormais)): ?>
-            <p style="color: #666; font-style: italic;">Nenhum pedido de empréstimo aguardando revisão.</p>
+            <p style="color: #666; font-style: italic; margin-bottom: 35px;">Nenhum pedido de empréstimo aguardando revisão.</p>
         <?php else: ?>
-            <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; flex-direction: column; gap: 20px; margin-bottom: 45px;">
                 <?php foreach ($pedidosNormais as $pedido): ?>
                     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 25px; background-color: rgba(255, 255, 255, 0.6); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); gap: 20px;">
                         <div style="flex: 1; min-width: 250px;">
@@ -120,7 +130,6 @@ usort($pedidosNormais, function($a, $b) {
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Código do pedido:</strong> <?= ucfirst(htmlspecialchars($pedido['codigo_pedido'] ?? '')) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Nível de prioridade:</strong> <?= ucfirst(htmlspecialchars($pedido['prioridade'] ?? '')) ?></p>
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Motivo:</strong> <?= ucfirst(htmlspecialchars($pedido['motivo'])) ?></p>
-                            
                         </div>
                         <div style="display: flex; gap: 15px; flex-wrap: wrap; width: auto;">
                             <a href="autorizar_pedidos.php?acao=aceitar&id_emprestimo=<?= $pedido['id_emprestimo'] ?>" class="btn-primary" style="text-decoration:none; font-size:18px; padding:12px 30px; border-radius: 15px; text-align: center; flex: 1; min-width: 120px;">Liberar</a>
@@ -130,6 +139,35 @@ usort($pedidosNormais, function($a, $b) {
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+
+        <!-- ================= NÍVEL 3: RASTREIO PENDENTE ================= -->
+        <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid rgba(26, 75, 159, 0.3); padding-bottom: 8px; text-align: left;">
+             Pedidos com Rastreio Pendente
+        </h2>
+
+        <?php if(empty($pedidosRastreio)): ?>
+            <p style="color: #666; font-style: italic;">Nenhum pedido aguardando rastreio de envio.</p>
+        <?php else: ?>
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <?php foreach ($pedidosRastreio as $pedido): ?>
+                    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; padding: 25px; background-color: rgba(255, 255, 255, 0.6); border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); gap: 20px; border-left: 6px solid #27ae60;">
+                        <div style="flex: 1; min-width: 250px;">
+                            <h2 style="color: #1a4b9f; margin: 0 0 10px 0; font-size: 24px;">Pedido Liberado: <?= htmlspecialchars($pedido['nome'] ?? 'Desconhecido') ?></h2>
+                            <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Produto(s):</strong> <?= htmlspecialchars($pedido['nome_produto']) ?></p>
+                            <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Destino:</strong> <?= htmlspecialchars($pedido['destinatario']) ?></p>
+                            <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Código do pedido:</strong> <span style="font-family: monospace; font-size: 18px; color: #e06c00; font-weight: bold;"><?= htmlspecialchars($pedido['codigo_pedido'] ?? '') ?></span></p>
+                        </div>
+                        <div style="display: flex; width: auto;">
+                            <!-- Manda para a tela de rastreio -->
+                            <a href="rastreio_pedido.php" class="btn-primary" style="text-decoration:none; font-size:18px; padding:12px 30px; border-radius: 15px; text-align: center; background-color: #27ae60; color: white; font-weight: bold; box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);">
+                                Inserir Rastreio
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
     </div>
 </body>
 </html>
