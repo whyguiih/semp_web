@@ -88,7 +88,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <input type="text" name="nome" placeholder="Ex: Alicate de pressão" required>
                 </div>
                 
-                <!-- Adicione no formulário -->
+                
 <div class="form-linha" style="align-items: flex-end;">
     <div class="form-group" style="flex: 1;">
         <label>Código do Produto:*</label>
@@ -99,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </div>
 
-<!-- Adicione antes do </body> -->
+
 <script>
 async function gerarCodigoFrontend(tipo, inputId) {
     try {

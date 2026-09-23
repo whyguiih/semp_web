@@ -24,12 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'foto' => $caminhoNoBanco
     ];
 
-    // ===== AQUI ESTÁ A MÁGICA: CAPTURAR O RESULTADO =====
     $respostaAPI = chamarAPI('/usuario/cadastrar', 'POST', $dados);
     
-    // Vamos verificar o que a API respondeu
     if (is_array($respostaAPI) && isset($respostaAPI['erro'])) {
-        // Se a Cloudflare enviou um erro, vamos exibi-lo!
         $mensagem_erro = "A API recusou: " . $respostaAPI['erro'];
     } elseif ($respostaAPI === null) {
         $mensagem_erro = "Erro de conexão: A API da Cloudflare não respondeu.";
@@ -105,17 +102,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </div>
 
 <script>
-    // Seleciona o formulário da página
     const formulario = document.querySelector('form');
 
     formulario.addEventListener('submit', async function(evento) {
-        // Impede a página de recarregar ao clicar no botão
         evento.preventDefault(); 
         
-        // Pega todos os dados preenchidos
         const formData = new FormData(formulario);
         
-        // Monta o "pacote" JSON que a API está esperando
         const dados = {
             usuario: formData.get('usuario'),
             senha: formData.get('senha'),
@@ -124,8 +117,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         };
 
         try {
-            // Faz a chamada para a Rota da sua API
-            // ATENÇÃO: Troque a URL abaixo pela URL real do seu Cloudflare Worker!
             const resposta = await fetch('https://api-estoque.whyguiih.workers.dev/usuario/cadastrar', {
                 method: 'POST',
                 headers: {
@@ -136,10 +127,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             const resultado = await resposta.json();
 
-            // Verifica se deu certo
             if (resultado.sucesso) {
                 alert("Sucesso: " + resultado.mensagem);
-                formulario.reset(); // Limpa os campos do formulário
+                formulario.reset();
             } else {
                 alert("Atenção: " + resultado.mensagem);
             }

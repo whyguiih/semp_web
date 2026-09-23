@@ -2,19 +2,16 @@
 session_start();
 require_once 'api.php';
 
-// Controle de acesso seguro para administradores e moderadores
 if (!isset($_SESSION['logado']) || ($_SESSION['nivel_conta'] !== '1' && $_SESSION['nivel_conta'] !== '2')) { 
     header("Location: estoque.php"); 
     exit(); 
 }
 
-// Processa o incremento de estoque replicando metadados
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['acao']) && $_POST['acao'] === 'adicionar_unidades') {
     $nome_produto = $_POST['nome_produto'];
     $quantidade_novas_unidades = (int)$_POST['quant_adicionar'];
 
     if ($quantidade_novas_unidades > 0) {
-        // Busca todos os itens para encontrar o produto modelo que servirá de espelho
         $todos_produtos = chamarAPI('/produtos', 'GET');
         if (!is_array($todos_produtos)) $todos_produtos = [];
 
@@ -30,13 +27,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['acao']) && $_POST['aca
             $houveErro = false;
             $unidadesCadastradas = 0;
 
-            // Insere cada nova unidade de forma individual no ecossistema
             for ($i = 0; $i < $quantidade_novas_unidades; $i++) {
                 $dados = [
                     'nome' => $produto_modelo['nome'],
-                    'codigo' => gerarCodigoSemp($_SESSION['unidade'], 2), // Código autogerado XXXXX-XXXXXXXXXX
+                    'codigo' => gerarCodigoSemp($_SESSION['unidade'], 2),
                     'descricao' => $produto_modelo['descricao'],
-                    'quant' => 1, // Mantém o padrão estrutural de 1 linha por item físico
+                    'quant' => 1,
                     'uni_natal' => $produto_modelo['uni_natal'],
                     'marca_ref' => $produto_modelo['marca_ref'],
                     'cor' => $produto_modelo['cor'],
@@ -70,11 +66,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['acao']) && $_POST['aca
     }
 }
 
-// Busca a listagem completa atualizada para renderizar na tabela
 $produtos_individuais = chamarAPI('/produtos', 'GET');
 if (!is_array($produtos_individuais)) $produtos_individuais = [];
 
-// Consolida os registros idênticos pelo nome para exibição limpa
 $produtos_agrupados = [];
 foreach ($produtos_individuais as $p) {
     $nomeChave = mb_strtolower(trim($p['nome']), 'UTF-8');

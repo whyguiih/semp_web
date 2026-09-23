@@ -2,29 +2,22 @@
 session_start();
 require_once 'api.php';
 
-// Segurança: Permite apenas Nível 2
 if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] != '2') { 
     header("Location: index.php"); 
     exit(); 
 }
 
-// Busca TODOS os rastreios da API
 $todos_rastreios = chamarAPI('/rastreio/todos', 'GET');
 
 if (!is_array($todos_rastreios) || isset($todos_rastreios['erro'])) {
     $todos_rastreios = [];
 }
 
-// Pega a data de hoje no fuso horário exato do Brasil
 date_default_timezone_set('America/Sao_Paulo');
 $hoje = date('Y-m-d');
 
-// Pega a unidade de quem está acessando
 $minha_unidade = $_SESSION['unidade'];
 
-// =========================================================
-// MÁGICA 1: AGRUPAR O HISTÓRICO PARA EVITAR DUPLICATAS
-// =========================================================
 $pacotes = [];
 foreach ($todos_rastreios as $rastreio) {
     $codigo = $rastreio['codigo'];
@@ -38,21 +31,16 @@ $saidas_hoje = [];
 $chegadas_hoje = [];
 
 foreach ($pacotes as $codigo => $historico) {
-    // Pega APENAS a última viagem registrada para esse pacote
     $viagemAtual = end($historico);
 
-    // Se o pacote tem mais de um registro e a origem é igual ao destino, ele retornou.
-    // Como o ciclo finalizou, nós o RETIRAMOS da lista ignorando ele (continue).
     if (count($historico) > 1 && strcasecmp($viagemAtual['unidade_original'], $viagemAtual['unidade_destino']) == 0) {
         continue; 
     }
 
-    // TABELA 1: É saída hoje E a minha unidade é a de origem?
     if ($viagemAtual['data_saida'] === $hoje && strcasecmp($viagemAtual['unidade_original'], $minha_unidade) == 0) {
         $saidas_hoje[] = $viagemAtual;
     }
     
-    // TABELA 2: É entrada hoje E a minha unidade é o destino?
     if ($viagemAtual['data_entrada'] === $hoje && strcasecmp($viagemAtual['unidade_destino'], $minha_unidade) == 0) {
         $chegadas_hoje[] = $viagemAtual;
     }

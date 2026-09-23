@@ -7,7 +7,6 @@ if (!isset($_SESSION['logado'])) { header("Location: index.php"); exit(); }
 
 $produtos_carrinho = chamarAPI('/carrinho', 'GET');
 
-// --- CAMADA DE PROTEÇÃO ---
 if (isset($produtos_carrinho['erro'])) {
     $_SESSION['erro_pedido'] = $produtos_carrinho['erro'];
     $produtos_carrinho = []; 
@@ -49,7 +48,7 @@ else if (!is_array($produtos_carrinho)) {
                     @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; visibility: hidden; } }
                 </style>
                 ";
-                unset($_SESSION['codigo_pedido']); // Limpa a sessão após exibir
+                unset($_SESSION['codigo_pedido']);
             }
             else if ($_GET['msg'] == 'sucesso') {
                 echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Pedido solicitado com sucesso! Aguarde autorização.</h2>";
@@ -67,35 +66,34 @@ else if (!is_array($produtos_carrinho)) {
         <?php if(empty($produtos_carrinho)): ?>
             <h2 style="color: #333;">Nenhum item por aqui. Continue navegando para encontrar o que precisa.</h2>
         <?php else: ?>
-            <!-- FORMULÁRIO COM FLEXBOX E ALTURA MÍNIMA -->
+            
             <form action="tela_pedido.php" method="POST" style="display: flex; flex-direction: column; min-height: calc(100vh - 180px);">
                 
-                <!-- CONTAINER EM GRID (Imitando a tela inicial em colunas) -->
+                
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; margin-bottom: 25px;">
                     
                     <?php foreach ($produtos_carrinho as $item): ?>
                         <?php 
-                            // Tratamento blindado para buscar as chaves corretas e evitar quebra do HTML
                             $nome_produto = $item['produto'] ?? ($item['nome'] ?? 'Produto sem nome');
                             $foto_produto = !empty($item['foto']) ? $item['foto'] : 'img/logo.png';
                             $qtd_selecionada = $item['quantidade'] ?? 1;
                             $estoque_max = $item['estoque_max'] ?? 1;
                         ?>
                         
-                        <!-- CARD DO PRODUTO -->
+                        
                         <div class="cart-item-novo" style="display: flex; flex-direction: column; align-items: center; padding: 25px; background: #ebf2ff; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0; position: relative;">
                             
-                            <!-- Checkbox posicionado no canto superior direito do card -->
+                            
                             <div style="position: absolute; top: 15px; right: 15px;">
                                 <input type="checkbox" name="produtos_selecionados[]" value="<?= htmlspecialchars($nome_produto) ?>" class="cart-checkbox" checked style="transform: scale(1.4); cursor: pointer;">
                             </div>
                             
-                            <!-- Foto -->
+                            
                             <img src="<?= htmlspecialchars($foto_produto) ?>" 
                                  onerror="this.onerror=null; this.src='img/logo.png';" 
                                  alt="Foto" class="cart-img" style="width: 130px; height: 130px; object-fit: cover; border-radius: 10px; border: 1px solid #eaeaea; margin-bottom: 15px; background-color: #fff;">
                             
-                            <!-- Informações do Produto -->
+                            
                             <div class="cart-info" style="width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1;">
                                 <h2 style="margin: 0 0 15px 0; font-size: 20px; color: #1a4b9f; font-weight: bold; line-height: 1.2;"><?= htmlspecialchars($nome_produto) ?></h2>
                                 
@@ -111,14 +109,14 @@ else if (!is_array($produtos_carrinho)) {
                                 </div>
                             </div>
                             
-                            <!-- Botão Remover centralizado na base do card -->
+                            
                             <a href="remover_carrinho.php?nome=<?= urlencode($nome_produto) ?>" class="btn-deletar" style="background-color: #ef5e31; color: #ffffff; padding: 12px; border-radius: 10px; text-decoration: none; font-weight: bold; transition: background 0.3s; text-align: center; width: 100%; box-shadow: 0 4px 6px rgba(239, 94, 49, 0.2); box-sizing: border-box;">Remover</a>
                         </div>
                     <?php endforeach; ?>
                     
                 </div>
                 
-                <!-- BOTÃO DE FINALIZAR PEDIDO NO FINAL DA TELA -->
+                
                 <div class="cart-footer" style="display: flex; justify-content: center; margin-top: auto; padding-bottom: 20px;">
                     <button type="submit" class="btn-finalizar-pedido" style="padding: 15px 40px; font-size: 18px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); cursor: pointer;">Avançar para o Pedido</button>
                 </div>

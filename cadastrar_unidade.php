@@ -2,16 +2,13 @@
 session_start();
 require_once 'api.php';
 
-// 1. TRAVA DE SEGURANÇA: Apenas nível 3 (Administrador) tem acesso
 if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] !== '3') {
     header("Location: estoque.php");
     exit();
 }
 
-// 2. PROCESSAMENTO DO FORMULÁRIO
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    // Prepara os dados exatamente como o Cloudflare Worker espera receber
     $dados = [
         'nome_unidade'  => $_POST['nome_unidade'],
         'estado'        => $_POST['estado'],
@@ -19,10 +16,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'identificacao' => $_POST['identificacao']
     ];
 
-    // Faz a chamada para a Rota da sua API
     $respostaAPI = chamarAPI('/unidade/cadastrar', 'POST', $dados);
 
-    // Valida a resposta retornada pelo Worker
     if (is_array($respostaAPI) && isset($respostaAPI['sucesso']) && $respostaAPI['sucesso'] === true) {
         $mensagem = $respostaAPI['mensagem'];
     } elseif (is_array($respostaAPI) && isset($respostaAPI['erro'])) {
@@ -52,7 +47,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="cadastro-container" style="max-width: 600px; width: 100%;">
             <h1 style="color: #1a4b9f; margin-bottom: 15px; text-align: center; font-size: 28px;">Cadastrar Unidade / Adendo</h1>
             
-            <!-- Mensagens de Alerta -->
+            
             <?php if(isset($mensagem)) echo "<h2 style='color: #ffffff; background-color: #27ae60; padding: 10px 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; font-size: 18px;'>$mensagem</h2>"; ?>
             <?php if(isset($mensagem_erro)) echo "<h2 style='color: #ffffff; background-color: #ef5e31; padding: 10px 20px; border-radius: 12px; margin-bottom: 15px; text-align: center; font-size: 18px;'>$mensagem_erro</h2>"; ?>
             
@@ -78,14 +73,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <label>Estado:*</label>
                         <select name="estado" id="estado" required onchange="atualizarRegioes()" style="width: 100%; padding: 10px; border-radius: 12px; border: 2px solid rgba(26, 75, 159, 0.3); font-size: 16px; color: #1a4b9f; outline: none; cursor: pointer;">
                             <option value="">Selecione um Estado</option>
-                            <!-- Povoado via JavaScript -->
+                            
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Região:*</label>
                         <select name="regiao" id="regiao" required style="width: 100%; padding: 10px; border-radius: 12px; border: 2px solid rgba(26, 75, 159, 0.3); font-size: 16px; color: #1a4b9f; outline: none; cursor: pointer;">
-                            <!-- Povoado dinamicamente via JavaScript -->
+                            
                         </select>
                     </div>
                 </div>
@@ -97,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
-    <!-- LÓGICA DE DROPDOWN DINÂMICO (Replicação do Android) -->
+    
     <script>
         const listaEstados = [
             "Rio Grande do Sul", "Santa Catarina", "Paraná", "São Paulo", "Rio de Janeiro",
@@ -116,7 +111,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         const listaRegioesPadrao = ["Metropolitana"];
 
-        // Ao carregar a página, preenche o select de estados
         window.onload = function() {
             const selectEstado = document.getElementById('estado');
             listaEstados.forEach(estado => {
@@ -125,15 +119,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 option.text = estado;
                 selectEstado.appendChild(option);
             });
-            atualizarRegioes(); // Inicia com a região padrão vazia ou configurada
+            atualizarRegioes();
         };
 
-        // Função chamada sempre que o Estado muda
         function atualizarRegioes() {
             const estadoSelecionado = document.getElementById('estado').value;
             const selectRegiao = document.getElementById('regiao');
             
-            // Limpa as opções atuais
             selectRegiao.innerHTML = '';
 
             let regioesParaMostrar = [];
@@ -144,7 +136,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 regioesParaMostrar = listaRegioesPadrao;
             }
 
-            // Povoa o novo select
             regioesParaMostrar.forEach(regiao => {
                 let option = document.createElement('option');
                 option.value = regiao;

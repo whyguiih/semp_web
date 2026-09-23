@@ -1,7 +1,5 @@
 
-/* ==========================================
-   1. CONFIGURAÇÕES GERAIS E RESET
-   ========================================== */
+
 * {
     margin: 0;
     padding: 0;
@@ -18,9 +16,7 @@ body {
     display: flex;
 }
 
-/* ==========================================
-   2. ESTRUTURA PRINCIPAL (SIDEBAR E MAIN)
-   ========================================== */
+
 .sidebar {
     width: 100px;
     height: calc(100vh - 32px);
@@ -68,9 +64,7 @@ body {
     overflow-y: auto;
 }
 
-/* ==========================================
-   3. TELA DE LOGIN
-   ========================================== */
+
 .login-page {
     min-height: 100vh;
     width: 100%;
@@ -179,9 +173,7 @@ footer {
     width: 100%;
 }
 
-/* ==========================================
-   4. COMPONENTES GERAIS E FORMS
-   ========================================== */
+
 .form-group { margin-bottom: 20px; }
 .form-group label { display: block; font-size: 20px; color: #1a4b9f; font-weight: bold; margin-bottom: 5px; }
 .form-group input, .form-group textarea { 
@@ -209,9 +201,7 @@ footer {
 .search-bar input { background: transparent; border: none; outline: none; color: #fff; font-size: 20px; width: 100%; }
 .search-bar input::placeholder { color: #d7d7d7; }
 
-/* ==========================================
-   5. ESTOQUE E PRODUTOS
-   ========================================== */
+
 .produtos-grid {
     display: grid; 
     grid-template-columns: repeat(4, 1fr); 
@@ -249,7 +239,7 @@ footer {
 .produto-card h2 { font-size: 19px; margin-bottom: 5px; line-height: 1.2; }
 .produto-card p { font-size: 14px; margin-bottom: 2px; }
 
-/* Detalhes do Produto */
+
 .produto-detalhe {
     display: flex;
     flex-direction: row;
@@ -325,9 +315,7 @@ footer {
     -webkit-appearance: none; margin: 0;
 }
 
-/* ==========================================
-   6. CARRINHO E CADASTRO
-   ========================================== */
+
 .cart-item-novo {
     display: flex; align-items: center; background: transparent; padding: 15px 0; margin-bottom: 15px;
     border-bottom: 2px solid rgba(26, 75, 159, 0.2); gap: 20px;
@@ -395,10 +383,7 @@ footer {
 .btn-salvar { margin-top: 10px; padding: 12px 35px; font-size: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(26, 75, 159, 0.3); }
 
 
-/* ==========================================
-   7. RESPONSIVIDADE EXCLUSIVA: MOBILE (Max 768px)
-   AQUI RESOLVEMOS A VISIBILIDADE COMPLETA!
-   ========================================== */
+
 
 @media (max-width: 768px) {
     body {
@@ -406,7 +391,7 @@ footer {
         overflow: hidden;
     }
 
-    /* CORREÇÃO DO MENU: Fundo Azul Escuro garante contraste total com os ícones brancos! */
+    
     .sidebar {
         width: 100% !important;
         height: 70px !important;
@@ -444,7 +429,7 @@ footer {
         border-radius: 20px !important;
     }
 
-    /* TELA DE LOGIN ADAPTADA */
+    
     .login-container {
         flex-direction: column-reverse !important; 
         width: 90% !important;
@@ -459,10 +444,10 @@ footer {
     .login-form h1 { font-size: 30px !important; margin-bottom: 20px !important; }
     .login-form button { width: 100% !important; }
 
-    /* BARRA DE PESQUISA */
+    
     .search-bar { max-width: 100% !important; margin-bottom: 15px !important; }
 
-    /* GRADE DE PRODUTOS: 2 por linha com excelente visual */
+    
     .produtos-grid {
         grid-template-columns: repeat(2, 1fr) !important; 
         gap: 12px !important; 
@@ -471,7 +456,7 @@ footer {
     .produto-card img { height: 110px !important; }
     .produto-card h2 { font-size: 16px !important; }
 
-    /* DETALHES DO PRODUTO (produto.php) */
+    
     .produto-detalhe {
         flex-direction: column !important; 
         gap: 15px !important;
@@ -484,7 +469,7 @@ footer {
     .produto-col-right h3 { font-size: 18px !important; margin-bottom: 8px !important; }
     .produto-col-right p { font-size: 15px !important; margin-bottom: 8px !important; }
 
-    /* Solta os botões do absoluto para caber perfeitamente no ecrã */
+    
     .produto-acoes-form {
         position: relative !important;
         bottom: auto !important; left: auto; right: auto !important;
@@ -498,7 +483,7 @@ footer {
     .seletor-qtd { width: 100% !important; justify-content: space-between !important; height: 48px !important; }
     .seletor-qtd button { flex: 1 !important; }
 
-    /* CARRINHO */
+    
     .cart-item-novo { gap: 10px !important; padding: 12px 0 !important; }
     .cart-img { width: 60px !important; height: 60px !important; }
     .cart-info h2 { font-size: 18px !important; }
@@ -507,14 +492,14 @@ footer {
     .cart-footer { justify-content: center !important; }
     .btn-finalizar-pedido { width: 100% !important; }
 
-    /* FORMULÁRIOS DE CADASTRO E DETALHES (Garante visibilidade total dos inputs) */
+    
     .cadastro-container {
         padding: 15px !important;
         background-color: rgba(255, 255, 255, 0.95) !important;
     }
     .form-linha { flex-direction: column !important; gap: 0 !important; }
     
-    /* Target de TODOS os inputs possíveis do sistema para fundo branco legível */
+    
     .form-group input[type="text"], 
     .form-group input[type="number"], 
     .form-group input[type="email"], 
@@ -527,7 +512,7 @@ footer {
         border: 2px solid #1a4b9f !important; 
         font-size: 15px !important; 
         color: #1a4b9f !important; 
-        background-color: #ffffff !important; /* Fundo branco puro garante leitura perfeita */
+        background-color: #ffffff !important;
         text-align: center !important; 
     }
     .form-group select { appearance: none; -webkit-appearance: none; }

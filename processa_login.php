@@ -6,7 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usuario = $_POST['usuario'];
     $senha = $_POST['senha'];
 
-    // Chama a rota /login do Worker
     $resposta = chamarAPI('/login', 'POST', ['usuario' => $usuario, 'senha' => $senha]);
    
     if (isset($resposta['sucesso']) && $resposta['sucesso'] === true) {
@@ -18,7 +17,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         header("Location: estoque.php");
         exit();
     } else {
-        // Pega a mensagem exata que o banco de dados/API enviou
         $mensagem_erro = isset($resposta['mensagem']) ? $resposta['mensagem'] : "Erro desconhecido ao realizar login.";
         $_SESSION['erro_login'] = $mensagem_erro;
         

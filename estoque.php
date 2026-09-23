@@ -4,17 +4,13 @@ session_start();
 require_once 'api.php';
 
 
-// 1. Criamos uma variável de controle (falsa por padrão)
 $exibirLogicaToast = false;
 $totalAtual = 0;
 
-// 2. VERIFICAÇÃO DE SEGURANÇA: Só entra no IF se o usuário for nível 1 ou nível 2
-// (Substitua 'status' pelo nome da variável que você usa para guardar o nível no login)
 if (isset($_SESSION['nivel_conta']) && ($_SESSION['nivel_conta'] == 1 || $_SESSION['nivel_conta'] == 2)) {
     
-    $exibirLogicaToast = true; // Ativa a permissão para renderizar o Toastify
+    $exibirLogicaToast = true;
 
-    // A API só será chamada se o usuário tiver a permissão acima
     $pedidosPendentes = chamarAPI('/pedidos/pendentes?unidade=' . urlencode($_SESSION['unidade']), 'GET');
     
     if (!is_array($pedidosPendentes) || isset($pedidosPendentes['erro']) || isset($pedidosPendentes['mensagem'])) {
@@ -30,17 +26,14 @@ if (!isset($_SESSION['logado'])) { header("Location: index.php"); exit(); }
 $produtos_individuais = chamarAPI('/produtos', 'GET');
 if (!is_array($produtos_individuais)) $produtos_individuais = [];
 
-// Agrupa os produtos pelo nome para exibição consolidada na vitrine
 $produtos = [];
 foreach ($produtos_individuais as $p) {
     $nomeChave = mb_strtolower(trim($p['nome']), 'UTF-8');
     
     if (!isset($produtos[$nomeChave])) {
-        // Usa a primeira unidade encontrada como modelo visual do card
         $produtos[$nomeChave] = $p;
         $produtos[$nomeChave]['quant'] = 0;
     }
-    // Soma 1 para cada registro individual com o mesmo nome encontrado no estoque
     $produtos[$nomeChave]['quant'] += 1;
 }
 ?>
@@ -87,23 +80,18 @@ foreach ($produtos_individuais as $p) {
     </div>
 </body>
 <script>
-    // O equivalente ao DocumentListener: Ouve cada vez que o usuário digita algo
     document.getElementById('input-pesquisa').addEventListener('input', function() {
-        // Pega o termo digitado e converte para minúsculas
         let termo = this.value.toLowerCase();
         
-        // Seleciona todos os "cards" de produtos na tela
         let produtos = document.querySelectorAll('.produto-card');
 
         produtos.forEach(function(produto) {
-            // Procura a tag <h2> dentro do card (que é onde está o nome do produto)
             let nomeProduto = produto.querySelector('h2').innerText.toLowerCase();
             
-            // Lógica do Java (LIKE %termo%): Se o nome incluir o termo digitado, exibe. Senão, esconde.
             if (nomeProduto.includes(termo)) {
-                produto.style.display = 'block'; // Mostra o card
+                produto.style.display = 'block';
             } else {
-                produto.style.display = 'none';  // Esconde o card
+                produto.style.display = 'none';
             }
         });
     });
@@ -118,13 +106,10 @@ foreach ($produtos_individuais as $p) {
            const usuarioAtual = "<?= $_SESSION['usuario'] ?>";
 const chaveStorage = 'pedidos_vistos_' + usuarioAtual;
 
-// Puxa o valor salvo específico para este usuário
 const pedidosVistos = parseInt(localStorage.getItem(chaveStorage)) || 0;
 const novosPedidos = totalAtual - pedidosVistos;
 
-// ... resto do if (novosPedidos > 0) igual ...
 
-// Dentro do IF, na hora de salvar a trava da sessão, também use o nome:
 
             if (novosPedidos > 0 && !sessionStorage.getItem('aviso_inicial_exibido')) {
                 
@@ -155,7 +140,6 @@ const novosPedidos = totalAtual - pedidosVistos;
 </body>
 
 <?php if (isset($_SESSION['nivel_conta']) && $_SESSION['nivel_conta'] == '0'): 
-    // Busca os pedidos do usuário comum logado (tabela tb_emprestimo)
     $meusPedidos = chamarAPI('/pedidos?usuario=' . urlencode($_SESSION['usuario']) . '&nivel=0', 'GET');
     if (!is_array($meusPedidos)) $meusPedidos = [];
 ?>
@@ -174,14 +158,11 @@ document.addEventListener("DOMContentLoaded", function() {
     meusPedidos.forEach(pedido => {
         const id = String(pedido.id_emprestimo);
         
-        // Como tb_emprestimo não tem data_entrada, usamos a data_postagem (ou data_reserva)
-        // Pegamos só a parte da data "YYYY-MM-DD" cortando a hora
         let dataPostagem = "";
         if (pedido.data_postagem) {
             dataPostagem = pedido.data_postagem.split(' ')[0];
         }
 
-        // Se o status for "Aprovado" (1) e a postagem foi feita hoje
         if (String(pedido.aprovacao) === "1" && dataPostagem === hoje && String(notificados[id]) !== "avisado_hoje") {
     
             let msg = `🎉 O seu pedido de "${pedido.nome_produto}" foi aprovado e postado hoje!`;
@@ -215,12 +196,8 @@ document.addEventListener("DOMContentLoaded", function() {
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <?php 
-    // =========================================================================
-    // LÓGICA DE NOTIFICAÇÕES PARA USUÁRIOS NÍVEL 2 (GERENTES)
-    // =========================================================================
     if (isset($_SESSION['nivel_conta']) && $_SESSION['nivel_conta'] == '2'): 
         
-        // Busca TODOS os rastreios para podermos analisar o histórico (Atrasos e Retornos)
         $todos_rastreios = chamarAPI('/rastreio/todos', 'GET');
         if (!is_array($todos_rastreios)) $todos_rastreios = [];
     ?>
@@ -229,18 +206,14 @@ document.addEventListener("DOMContentLoaded", function() {
     document.addEventListener("DOMContentLoaded", function() {
         const rastreios = <?= json_encode($todos_rastreios) ?>;
         const minhaUnidade = "<?= $_SESSION['unidade'] ?>";
-        const hoje = new Date().toISOString().split('T')[0]; // Pega YYYY-MM-DD
+        const hoje = new Date().toISOString().split('T')[0];
         
-        // 1. Puxa a memória do navegador para não repetir Toasts (Spam)
         let vistos = {};
         try { vistos = JSON.parse(localStorage.getItem('notificacoes_rastreio')) || {}; } catch(e) {}
 
-        // Função para formatar a data de 2024-10-25 para 25/10/2024
         const formataDataBR = (dataStr) => dataStr.split('-').reverse().join('/');
 
-        // Função auxiliar para exibir o Toast e salvar na memória
         function dispararAviso(idUnico, mensagem, corGradient) {
-            // Só exibe se ainda não mostramos ESSE aviso específico hoje
             if (vistos[idUnico] !== hoje) {
                 Toastify({
                     text: mensagem,
@@ -251,47 +224,37 @@ document.addEventListener("DOMContentLoaded", function() {
                     style: { background: corGradient, color: "#fff", fontWeight: "bold", borderRadius: "8px" }
                 }).showToast();
                 
-                vistos[idUnico] = hoje; // Grava que avisou hoje
+                vistos[idUnico] = hoje;
                 localStorage.setItem('notificacoes_rastreio', JSON.stringify(vistos));
             }
         }
 
-        // 2. AGRUPAR O HISTÓRICO POR CÓDIGO DO PEDIDO
-        // Isso permite saber se o pacote está na viagem 1 ou se já foi recadastrado (viagem 2)
         const pacotes = {};
         rastreios.forEach(r => {
             if (!pacotes[r.codigo]) pacotes[r.codigo] = [];
             pacotes[r.codigo].push(r);
         });
 
-        // 3. ANALISAR CADA PACOTE
         for (const codigo in pacotes) {
             const historico = pacotes[codigo];
             
-            // O último registro inserido no banco para este código é o status atual dele
             const viagemAtual = historico[historico.length - 1];
 
-            // Variáveis para facilitar a leitura
             const souOrigem = (viagemAtual.unidade_original === minhaUnidade);
             const souDestino = (viagemAtual.unidade_destino === minhaUnidade);
 
-            // Se minha unidade não tem nada a ver com esse pacote no momento, ignora e vai pro próximo
             if (!souOrigem && !souDestino) continue;
 
-            // --- LÓGICA A: PACOTE ACABOU DE SER CONFIRMADO (TEM MAIS DE 1 REGISTRO NO BANCO) ---
             if (historico.length > 1) {
-                // Apenas verificamos confirmações se elas aconteceram recentemente (hoje)
                 if (viagemAtual.data_saida === hoje || viagemAtual.data_entrada === hoje) {
                     
                     if (viagemAtual.unidade_original === viagemAtual.unidade_destino) {
-                        // REGRA: Retornou para a unidade original
                         dispararAviso(
                             `retorno_${codigo}`, 
                             `🔄 O pedido ${codigo} RETORNOU à unidade original (${viagemAtual.unidade_original}).`, 
                             "linear-gradient(to right, #e06c00, #f39c12)" // Laranja
                         );
                     } else {
-                        // REGRA: Chegou ao destino
                         if (souDestino || souOrigem) {
                             dispararAviso(
                                 `chegou_${codigo}`, 
@@ -301,12 +264,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         }
                     }
                 }
-                continue; // Como já foi confirmado/entregue, não precisa checar atrasos dessa viagem.
+                continue;
             }
 
-            // --- LÓGICA B: PACOTE ESTÁ EM TRÂNSITO (SÓ TEM 1 REGISTRO) ---
             
-            // REGRA: Atrasado (Passou do dia de entrada e ainda só tem 1 registro no banco)
             if (hoje > viagemAtual.data_entrada) {
                 dispararAviso(
                     `atraso_${codigo}`, 
@@ -314,7 +275,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     "linear-gradient(to right, #c0392b, #e74c3c)" // Vermelho
                 );
             } 
-            // REGRA: Sai hoje (Avisa a Origem)
             else if (viagemAtual.data_saida === hoje && souOrigem) {
                 dispararAviso(
                     `saida_${codigo}`, 
@@ -322,7 +282,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     "linear-gradient(to right, #8e44ad, #9b59b6)" // Roxo
                 );
             }
-            // REGRA: Chega hoje (Avisa o Destino)
             else if (viagemAtual.data_entrada === hoje && souDestino) {
                 dispararAviso(
                     `chegada_${codigo}`, 

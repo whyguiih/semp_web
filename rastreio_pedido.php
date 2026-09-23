@@ -17,16 +17,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" ){
 
     $dados = [
         'codigo' => $codigo, 
-        'unidade_original' => $original, // <-- CORREÇÃO: Agora usa o que foi digitado no formulário
+        'unidade_original' => $original,
         'unidade_destino' => $destino,
         'data_saida' => $data_saida,
         'data_entrada' => $data_entrada
     ];
 
-    // Envia os dados para a API
     $resposta = chamarAPI('/pedido/rastreio', 'POST', $dados);
     
-    // CORREÇÃO: Essa é a parte que você tinha apagado sem querer!
     if (is_array($resposta) && isset($resposta['erro'])) {
         $_SESSION['erro_rastreio'] = $resposta['erro'];
         header("Location: rastreio_pedido.php?msg=erro");

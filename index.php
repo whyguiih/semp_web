@@ -58,7 +58,6 @@ session_start();
     </footer>
 
     <script>
-    // Limpa a trava de exibição da sessão do navegador ao passar pelo login
     sessionStorage.removeItem('aviso_inicial_exibido');
 </script>
 </body>

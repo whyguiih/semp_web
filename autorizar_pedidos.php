@@ -8,7 +8,6 @@ if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] == '0') {
 }
 
 if (isset($_GET['acao']) && isset($_GET['id_emprestimo'])) {
-    // Se a ação for ciente, mudamos o status para 4 (Deletado do painel ativo/Finalizado)
     if ($_GET['acao'] == 'ciente') {
         $novoStatus = 4;
     } else {
@@ -23,34 +22,28 @@ if (isset($_GET['acao']) && isset($_GET['id_emprestimo'])) {
     exit();
 }
 
-// Busca os pedidos da API
 $pedidosPendentes = chamarAPI('/pedidos/pendentes?unidade=' . urlencode($_SESSION['unidade']), 'GET');
 
 if (!is_array($pedidosPendentes) || isset($pedidosPendentes['erro']) || isset($pedidosPendentes['mensagem'])) {
     $pedidosPendentes = [];
 }
 
-// 1. SEPARANDO EM 3 NÍVEIS DIFERENTES
 $pedidosNormais = [];
 $pedidosRetorno = [];
-$pedidosRastreio = []; // Novo Array para Rastreio
+$pedidosRastreio = [];
 
 foreach ($pedidosPendentes as $pedido) {
     $status = $pedido['aprovacao'] ?? 0;
 
     if ($status == 3) {
-        // NÍVEL 1: Devoluções
         $pedidosRetorno[] = $pedido;
     } elseif ($status == 1) {
-        // NÍVEL 3: Aprovados (Aguardando Rastreio)
         $pedidosRastreio[] = $pedido;
     } else {
-        // NÍVEL 2: Pendentes de Autorização (Status 0 ou outro)
         $pedidosNormais[] = $pedido;
     }
 }
 
-// --- LÓGICA DE ORDENAÇÃO POR PRIORIDADE (Apenas para Pedidos Normais) ---
 function obterPesoPrioridade($prioridade) {
     $p = strtolower(trim($prioridade ?? ''));
     if ($p === 'alto') return 1;
@@ -81,7 +74,7 @@ usort($pedidosNormais, function($a, $b) {
         
         <?php if(isset($_GET['msg'])) echo "<h2 style='color: #ffffff; background-color: rgba(26, 75, 159, 0.6); padding: 12px 25px; border-radius: 15px; margin-bottom: 25px; text-align: center; font-size: 18px;'>Estado atualizado com sucesso!</h2>"; ?>
 
-        <!-- ================= NÍVEL 1: SOLICITAÇÕES DE RETORNO ================= -->
+        
         <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid rgba(26, 75, 159, 0.3); padding-bottom: 8px; text-align: left;">
             Devoluções Exigidas pelas Unidades Natais
         </h2>
@@ -111,7 +104,7 @@ usort($pedidosNormais, function($a, $b) {
             </div>
         <?php endif; ?>
 
-        <!-- ================= NÍVEL 2: PEDIDOS TRADICIONAIS ================= -->
+        
         <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid rgba(26, 75, 159, 0.3); padding-bottom: 8px; text-align: left;">
              Novos Pedidos de Empréstimo Pendentes
         </h2>
@@ -140,7 +133,7 @@ usort($pedidosNormais, function($a, $b) {
             </div>
         <?php endif; ?>
 
-        <!-- ================= NÍVEL 3: RASTREIO PENDENTE ================= -->
+        
         <h2 style="color: #1a4b9f; font-size: 22px; margin-bottom: 15px; border-bottom: 2px solid rgba(26, 75, 159, 0.3); padding-bottom: 8px; text-align: left;">
              Pedidos com Rastreio Pendente
         </h2>
@@ -158,7 +151,7 @@ usort($pedidosNormais, function($a, $b) {
                             <p style="margin: 5px 0; font-size: 16px; color: #333;"><strong>Código do pedido:</strong> <span style="font-family: monospace; font-size: 18px; color: #e06c00; font-weight: bold;"><?= htmlspecialchars($pedido['codigo_pedido'] ?? '') ?></span></p>
                         </div>
                         <div style="display: flex; width: auto;">
-                            <!-- Manda para a tela de rastreio -->
+                            
                             <a href="rastreio_pedido.php" class="btn-primary" style="text-decoration:none; font-size:18px; padding:12px 30px; border-radius: 15px; text-align: center; background-color: #27ae60; color: white; font-weight: bold; box-shadow: 0 4px 6px rgba(39, 174, 96, 0.2);">
                                 Inserir Rastreio
                             </a>

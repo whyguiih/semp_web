@@ -2,20 +2,16 @@
 session_start();
 require_once 'api.php';
 
-// Trava de Segurança: Apenas Operadores (1) e Gerentes (2) podem editar o estoque
 if (!isset($_SESSION['logado']) || ($_SESSION['nivel_conta'] !== '1' && $_SESSION['nivel_conta'] !== '2')) { 
     header("Location: estoque.php"); 
     exit(); 
 }
 
-// 1. PROCESSAMENTO DOS FORMULÁRIOS (POST)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
-    // --- LÓGICA DE ATUALIZAÇÃO ---
     if (isset($_POST['acao']) && $_POST['acao'] === 'atualizar') {
         $caminhoNoBanco = null;
 
-        // Se uma nova foto for enviada, faz o upload
         if (isset($_FILES['foto']) && $_FILES['foto']['error'] == 0) {
             if (!file_exists('uploads')) { mkdir('uploads', 0777, true); }
             $arquivoDestino = 'uploads/' . time() . '_' . $_FILES['foto']['name'];
@@ -38,11 +34,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'descricao_detalhada' => $_POST['descricao_detalhada']
         ];
 
-        // Só anexa a foto no payload se uma nova foi enviada
         if ($caminhoNoBanco !== null) {
             $dados_atualizacao['foto'] = $caminhoNoBanco;
         } else {
-            $dados_atualizacao['foto'] = $_POST['foto_atual']; // Mantém a antiga
+            $dados_atualizacao['foto'] = $_POST['foto_atual'];
         }
 
         $respostaAPI = chamarAPI('/produto/atualizar', 'POST', $dados_atualizacao);
@@ -54,7 +49,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     }
     
-    // --- LÓGICA DE DELEÇÃO ---
     elseif (isset($_POST['acao']) && $_POST['acao'] === 'deletar') {
         $dados_delecao = [
             'codigo' => $_POST['codigo_deletar']
@@ -70,11 +64,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-// 2. BUSCA OS PRODUTOS PARA PREENCHER O SELECT E O JAVASCRIPT
 $todos_produtos = chamarAPI('/produtos', 'GET');
 if (!is_array($todos_produtos)) $todos_produtos = [];
 
-// Agrupa os produtos pelo nome para evitar repetições no dropdown
 $produtos_agrupados = [];
 foreach ($todos_produtos as $p) {
     $nomeChave = mb_strtolower(trim($p['nome']), 'UTF-8');
@@ -106,7 +98,7 @@ foreach ($todos_produtos as $p) {
             <?php if(isset($mensagem)) echo "<h2 style='color: white; background-color: #27ae60; padding: 10px; border-radius: 12px; margin-bottom: 15px; text-align: center;'>$mensagem</h2>"; ?>
             <?php if(isset($mensagem_erro)) echo "<h2 style='color: white; background-color: #e74c3c; padding: 10px; border-radius: 12px; margin-bottom: 15px; text-align: center;'>$mensagem_erro</h2>"; ?>
 
-            <!-- Seleção de Produto para Edição -->
+            
             <div class="form-group" style="background: rgba(26,75,159,0.05); padding: 15px; border-radius: 10px; border: 1px solid #1a4b9f;">
                 <label style="color: #1a4b9f; font-weight: bold;">Selecione o Produto para Editar:*</label>
                 <select id="seletor_produto" onchange="preencherFormulario()" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ccc; font-size: 16px;">
@@ -117,7 +109,7 @@ foreach ($todos_produtos as $p) {
                 </select>
             </div>
 
-            <!-- Formulário de Atualização -->
+            
             <form method="POST" enctype="multipart/form-data" class="form-cadastro" id="form_atualizar" style="display: none; margin-top: 20px;">
                 <input type="hidden" name="acao" value="atualizar">
                 <input type="hidden" name="id_estoque" id="id_estoque">
@@ -183,7 +175,7 @@ foreach ($todos_produtos as $p) {
             </form>
         </div>
 
-        <!-- Bloco de Deleção -->
+        
         <div class="cadastro-container" style="max-width: 800px; width: 100%; border-top: 5px solid #e74c3c;">
             <h2 style="color: #e74c3c; margin-bottom: 15px; text-align: center;">Zona de Perigo: Excluir Produto</h2>
             <form method="POST" onsubmit="return confirm('ATENÇÃO: Tem certeza que deseja excluir esta unidade permanentemente?');">
@@ -209,9 +201,8 @@ foreach ($todos_produtos as $p) {
         </div>
     </div>
 
-    <!-- Ponto de Integração JS/PHP -->
+    
     <script>
-        // Transforma o array PHP em um Objeto Javascript acessível
         const produtosData = <?= json_encode($produtos_agrupados) ?>;
 
         function preencherFormulario() {
@@ -221,10 +212,8 @@ foreach ($todos_produtos as $p) {
             if (seletor && produtosData[seletor]) {
                 const p = produtosData[seletor];
                 
-                // Mostra o formulário
                 form.style.display = 'block';
 
-                // Preenche os campos
                 document.getElementById('id_estoque').value = p.id_estoque || '';
                 document.getElementById('foto_atual').value = p.foto || '';
                 document.getElementById('nome').value = p.nome || '';

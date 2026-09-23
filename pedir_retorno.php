@@ -2,13 +2,11 @@
 session_start();
 require_once 'api.php';
 
-// Segurança: Permite apenas Operadores (1) e Gerentes (2)
 if (!isset($_SESSION['logado']) || $_SESSION['nivel_conta'] == '0') { 
     header("Location: estoque.php"); 
     exit(); 
 }
 
-// Processa a solicitação enviada via POST contendo a data escolhida
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_emprestimo']) && isset($_POST['data_retorno'])) {
     chamarAPI('/pedidos/solicitar_retorno', 'POST', [
         'id_emprestimo' => $_POST['id_emprestimo'],
@@ -19,7 +17,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['id_emprestimo']) && is
     exit();
 }
 
-// Busca os produtos que a sua unidade emprestou para outras (aprovados)
 $produtosEmprestados = chamarAPI('/pedidos/emprestados?unidade=' . urlencode($_SESSION['unidade']), 'GET');
 
 if (!is_array($produtosEmprestados) || isset($produtosEmprestados['erro']) || isset($produtosEmprestados['mensagem'])) {

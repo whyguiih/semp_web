@@ -10,7 +10,6 @@ if ($_SERVER["REQUEST_METHOD"] != "POST" || empty($_POST['produtos_selecionados'
 }
 
 $produtos_selecionados = $_POST['produtos_selecionados'];
-// CORREÇÃO: Capturamos também o array de quantidades enviado pelo carrinho
 $quantidades = $_POST['quantidades'] ?? [];
 ?>
 <!DOCTYPE html>
@@ -95,11 +94,9 @@ $quantidades = $_POST['quantidades'] ?? [];
     <script>
     async function gerarCodigoFrontend(tipo, inputId) {
         try {
-            // Chama o arquivo PHP gerador AJAX
             const resposta = await fetch(`gerar_codigo_ajax.php?tipo=${tipo}`);
             const codigo = await resposta.text();
             
-            // Verifica se a resposta não está vazia ou retornou erro HTML do PHP
             if(codigo && !codigo.includes("<br") && !codigo.includes("<b>")) {
                 document.getElementById(inputId).value = codigo.trim();
                 alert("Código Gerado!");

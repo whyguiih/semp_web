@@ -11,7 +11,6 @@ $id_produto = $_GET['id'];
 $todos_produtos = chamarAPI('/produtos', 'GET');
 $produto = null;
 
-// Encontra a unidade específica clicada para carregar os metadados (Foto, descrição, etc)
 foreach ($todos_produtos as $p) {
     if ($p['id_estoque'] == $id_produto) { $produto = $p; break; }
 }
@@ -20,20 +19,15 @@ if (!$produto || isset($produto['erro'])) {
     die("Produto não encontrado!");
 }
 
-// Calcula o estoque FÍSICO e o estoque REAL somando todas as unidades idênticas
 $quantidade_total_disponivel = 0;
 $estoque_real = 0;
 
 foreach ($todos_produtos as $p) {
     if (strcasecmp(trim($p['nome']), trim($produto['nome'])) === 0) {
-        // Soma 1 para cada item encontrado (Total Físico)
         $quantidade_total_disponivel++;
         
-        // Verifica o estoque real de cada unidade (1 se disponível, 0 se emprestado/bloqueado)
-        // Se a API não devolver 'estoque_real' individual, assumimos que está disponível (1)
         $valor_real_desta_unidade = $p['estoque_real'] ?? 1;
         
-        // Soma ao montante do estoque dinâmico
         $estoque_real += $valor_real_desta_unidade;
     }
 }
@@ -110,7 +104,7 @@ foreach ($todos_produtos as $p) {
             
             <input type="hidden" name="nome_produto" value="<?= htmlspecialchars($produto['nome']) ?>">
             
-            <!-- Botão travado caso o estoque real seja 0 -->
+            
             <button type="submit" <?= $estoque_real <= 0 ? 'disabled' : '' ?> style="background-color: <?= $estoque_real <= 0 ? '#999' : '#1a4b9f' ?>; color: white; border: none; padding: 15px 35px; font-size: 18px; font-weight: bold; border-radius: 15px; cursor: <?= $estoque_real <= 0 ? 'not-allowed' : 'pointer' ?>; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
                 Adicionar ao Carrinho
             </button>
@@ -118,7 +112,7 @@ foreach ($todos_produtos as $p) {
             <div style="display: flex; align-items: center; background-color: <?= $estoque_real <= 0 ? '#999' : '#1a4b9f' ?>; border-radius: 15px; overflow: hidden; height: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <button type="button" onclick="mudarQtd(-1)" <?= $estoque_real <= 0 ? 'disabled' : '' ?> style="background: transparent; border: none; color: white; font-size: 24px; font-weight: bold; width: 45px; height: 100%; cursor: pointer;">-</button>
                 
-                <!-- Input atualizado para ter como MÁXIMO o estoque_real e ficar desativado se for 0 -->
+                
                 <input type="number" id="quantidade_tela" name="quantidade" value="<?= $estoque_real > 0 ? 1 : 0 ?>" min="1" max="<?= $estoque_real ?>" onblur="validarQtd()" <?= $estoque_real <= 0 ? 'disabled' : '' ?> style="width: 60px; height: 100%; border: none; text-align: center; font-size: 18px; font-weight: bold; color: #1a4b9f; outline: none;">
                 
                 <button type="button" onclick="mudarQtd(1)" <?= $estoque_real <= 0 ? 'disabled' : '' ?> style="background: transparent; border: none; color: white; font-size: 24px; font-weight: bold; width: 45px; height: 100%; cursor: pointer;">+</button>

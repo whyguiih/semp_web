@@ -19,7 +19,6 @@ $data_reserva_fim = $_POST['data_reserva_fim'] ?? '';
     $motivo = $_POST['motivo'] ?? '';
     $data_postagem = date('Y-m-d H:i:s'); 
 
-    // Gera o código único do PEDIDO
    $resultado_pedido = $_POST['codigo_pedido'];
 
     $produtos_selecionados = $_POST['produtos_selecionados'];
@@ -27,7 +26,6 @@ $data_reserva_fim = $_POST['data_reserva_fim'] ?? '';
 
     $produtos_formatados = [];
 
-    // Lógica corrigida: Associa o nome correto do produto com a quantidade selecionada na tela
     if (is_array($produtos_selecionados)) {
         foreach ($produtos_selecionados as $nome_produto) {
             $qtd = isset($quantidades[$nome_produto]) ? (int)$quantidades[$nome_produto] : 1;
@@ -51,7 +49,7 @@ $data_reserva_fim = $_POST['data_reserva_fim'] ?? '';
         'email' => $email,
         'data_reserva' => $data_reserva_inicio,
         'data_devolucao' => $data_reserva_fim,
-        'unidade' => $_SESSION['unidade'], // Garante que a unidade destino seja enviada
+        'unidade' => $_SESSION['unidade'],
         'prioridade' => $prioridade,
         'motivo' => $motivo,
         'data_postagem' => $data_postagem,
