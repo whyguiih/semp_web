@@ -1,5 +1,5 @@
 <?php
-define('API_URL', 'https://api-estoque.whyguiih.workers.dev');
+define('API_URL', 'https://seu-worker.seu-subdominio.workers.dev');
 
 function chamarAPI($endpoint, $metodo = 'GET', $dados = null) {
     $url = API_URL . $endpoint;
