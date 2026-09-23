@@ -17,7 +17,7 @@
 
 ---
 
-## 📋 Visão Geral
+## Visão Geral
 
 O **SEMP Web** é a interface administrativa do ecossistema SEMP (Sistema de Estoque Multiplataforma). Construído em **PHP puro**, comunica-se exclusivamente via **API REST** hospedada no **Cloudflare Workers** com banco de dados **SQLite D1 (serverless)**.
 
@@ -25,22 +25,22 @@ O **SEMP Web** é a interface administrativa do ecossistema SEMP (Sistema de Est
 
 ---
 
-## ✨ Funcionalidades Principais
+## Funcionalidades Principais
 
 | Módulo | Descrição |
 |--------|-----------|
-| **🔐 Autenticação** | Login seguro via API; sessões PHP com validação de nível de acesso e unidade |
-| **📦 Estoque Vivo** | Listagem consolidada de produtos com busca em tempo real, fotos e quantidades |
-| **🛒 Carrinho & Pedidos** | Seleção de itens, ajuste de quantidades e formalização de solicitações de empréstimo |
-| **✅ Aprovação (Gestão)** | Operadores e gerentes autorizam/recusam pedidos pendentes de suas filiais |
-| **📝 Cadastro de Produtos** | Inclusão de novos materiais com upload de imagem (salva em `/uploads`) |
-| **👥 Gestão de Usuários** | Criação de contas com nível de permissão e unidade vinculada (apenas Admin) |
-| **📍 Rastreamento** | Visualização do fluxo de empréstimos entre unidades (origem → destino) |
-| **🔔 Notificações Inteligentes** | Toasts automáticos para: pedidos novos, aprovações, saídas/chegadas previstas, atrasos e retornos |
+| **Autenticação** | Login seguro via API; sessões PHP com validação de nível de acesso e unidade |
+| **Estoque Vivo** | Listagem consolidada de produtos com busca em tempo real, fotos e quantidades |
+| **Carrinho & Pedidos** | Seleção de itens, ajuste de quantidades e formalização de solicitações de empréstimo |
+| **Aprovação (Gestão)** | Operadores e gerentes autorizam/recusam pedidos pendentes de suas filiais |
+| **Cadastro de Produtos** | Inclusão de novos materiais com upload de imagem (salva em `/uploads`) |
+| **Gestão de Usuários** | Criação de contas com nível de permissão e unidade vinculada (apenas Admin) |
+| **Rastreamento** | Visualização do fluxo de empréstimos entre unidades (origem → destino) |
+| **Notificações Inteligentes** | Toasts automáticos para: pedidos novos, aprovações, saídas/chegadas previstas, atrasos e retornos |
 
 ---
 
-## 🏗️ Arquitetura
+## Arquitetura
 
 ```
 ┌─────────────────┐      HTTPS/JSON      ┌──────────────────────┐
@@ -61,7 +61,7 @@ O **SEMP Web** é a interface administrativa do ecossistema SEMP (Sistema de Est
 
 ---
 
-## 📁 Estrutura do Projeto
+## Estrutura do Projeto
 
 ```
 semp_web/
@@ -98,7 +98,7 @@ semp_web/
 
 ---
 
-## ⚙️ Pré-requisitos
+## Pré-requisitos
 
 | Requisito | Versão Mínima |
 |-----------|---------------|
@@ -109,7 +109,7 @@ semp_web/
 
 ---
 
-## 🚀 Instalação Rápida (XAMPP)
+## Instalação Rápida (XAMPP)
 
 ```bash
 # 1. Clone o repositório na pasta htdocs
@@ -131,7 +131,7 @@ mkdir C:\xampp\htdocs\semp_web\uploads
 
 ---
 
-## 🔐 Níveis de Acesso
+## Níveis de Acesso
 
 | Nível | Nome | Permissões |
 |-------|------|------------|
@@ -144,7 +144,7 @@ mkdir C:\xampp\htdocs\semp_web\uploads
 
 ---
 
-## 🗄️ Esquema do Banco (Cloudflare D1)
+## Esquema do Banco (Cloudflare D1)
 
 ### `tb_estoque` — Itens de estoque
 | Coluna | Tipo | Descrição |
@@ -194,7 +194,7 @@ mkdir C:\xampp\htdocs\semp_web\uploads
 
 ---
 
-## 🔌 Endpoints da API (Cloudflare Worker)
+## Endpoints da API (Cloudflare Worker)
 
 | Método | Endpoint | Descrição | Auth |
 |--------|----------|-----------|------|
@@ -220,7 +220,7 @@ mkdir C:\xampp\htdocs\semp_web\uploads
 
 ---
 
-## 🎯 Códigos SEMP (Padrão de Identificação)
+## Códigos SEMP (Padrão de Identificação)
 
 Formato: `{ESTADO}{REGIÃO}{ALEATÓRIO}{TIPO_UNIDADE}{TIPO_ENTIDADE}-{SUFIXO_10}`
 
@@ -240,7 +240,7 @@ Gerado automaticamente por `gerarCodigoSemp()` em `api.php`.
 
 ---
 
-## 🔔 Sistema de Notificações (Toastify)
+## Sistema de Notificações (Toastify)
 
 Notificações **client-side** via `localStorage` + `sessionStorage` para evitar spam:
 
@@ -256,7 +256,7 @@ Notificações **client-side** via `localStorage` + `sessionStorage` para evitar
 
 ---
 
-## 🎨 Interface & UX
+## Interface & UX
 
 - **Sidebar responsiva**: Colapsa em mobile (`☰` hamburger), itens visíveis conforme `nivel_conta`
 - **Busca instantânea**: Filtro `input` no `estoque.php` faz `includes()` no `h2` dos cards
@@ -266,7 +266,7 @@ Notificações **client-side** via `localStorage` + `sessionStorage` para evitar
 
 ---
 
-## 📦 Deploy em Produção
+## Deploy em Produção
 
 ### Apache (Linux/Windows)
 ```apache
@@ -300,7 +300,7 @@ Altere `api.php` para ler `getenv('API_URL')` com fallback.
 
 ---
 
-## 🧪 Testes Manuais Sugeridos
+## Testes Manuais Sugeridos
 
 1. **Login** → Comum, Operador, Gerente, Admin
 2. **Estoque** → Busca, paginação visual, cards com/sem foto
@@ -313,7 +313,7 @@ Altere `api.php` para ler `getenv('API_URL')` com fallback.
 
 ---
 
-## 🐛 Troubleshooting Comum
+## Troubleshooting Comum
 
 | Problema | Causa Provável | Solução |
 |----------|----------------|---------|
@@ -325,13 +325,13 @@ Altere `api.php` para ler `getenv('API_URL')` com fallback.
 
 ---
 
-## 👥 Créditos
+## Créditos
 
 Desenvolvido por **Threeeo** — 2026  
 **Gabriel Artuso**, **Guilherme Brandalize**, **Larissa B. Gazoli**
 
 ---
 
-## 📄 Licença
+## Licença
 
 Uso interno SENAI. Todos os direitos reservados.
